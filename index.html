@@ -34,7 +34,6 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
-        /* Branding Header */
         .header-banner {
             text-align: center;
             border-bottom: 3px solid var(--primary-red);
@@ -84,7 +83,6 @@
             font-weight: 700;
         }
 
-        /* Meta Info (Bill No, Date, Customer & Phone) */
         .meta-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -120,7 +118,6 @@
             border-color: var(--primary-red);
         }
 
-        /* Item Input Section */
         .item-box {
             background: #fafafa;
             border: 1px solid #eee;
@@ -152,7 +149,6 @@
             background-color: var(--dark-red);
         }
 
-        /* Item Manager Box */
         .item-manager-box {
             background: #eef6ff;
             border: 1px solid #cce3ff;
@@ -199,7 +195,6 @@
             font-weight: bold;
         }
 
-        /* Table */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -218,7 +213,6 @@
             color: white;
         }
 
-        /* Total & UPI QR Section */
         .total-qr-section {
             display: flex;
             justify-content: space-between;
@@ -264,7 +258,6 @@
             color: #444;
         }
 
-        /* Action Buttons */
         .action-btns {
             display: flex;
             gap: 10px;
@@ -300,7 +293,6 @@
         .btn-print-sm { background-color: #0288d1; }
         .btn-delete-sm { background-color: #d32f2f; }
 
-        /* History Section */
         .history-section {
             display: none;
             margin-top: 30px;
@@ -308,7 +300,6 @@
             padding-top: 20px;
         }
 
-        /* Print Styles */
         @media print {
             body { background: white; padding: 0; }
             .container { box-shadow: none; border: none; width: 100%; max-width: 100%; padding: 0; }
@@ -320,9 +311,8 @@
     </style>
 </head>
 <body>
-
 <div class="container">
-    <!-- Header Banner -->
+        <!-- Header Banner -->
     <div class="header-banner">
         <img id="bannerImg" src="logo.png" alt="Jay Ranjeet Graphic Design & Marketing" onerror="showFallbackHeader()">
         
@@ -384,7 +374,6 @@
                 <label>Size</label>
                 <input type="text" id="itemSize" placeholder="e.g. 10x12">
             </div>
-            <!-- Quantity with text + decimal inputmode -->
             <div class="form-group">
                 <label>Quantity / Sq.Ft</label>
                 <input type="text" id="itemQty" inputmode="decimal" placeholder="Qty" value="1" oninput="calculateItemTotal()">
@@ -400,8 +389,7 @@
         </div>
         <button class="btn-add" onclick="addItem()">+ Add Item To Bill</button>
     </div>
-
-    <!-- Items Table -->
+        <!-- Items Table -->
     <table id="billTable">
         <thead>
             <tr>
@@ -460,7 +448,6 @@
         </table>
     </div>
 </div>
-
 <script>
     let currentBillItems = [];
     let editingBillIndex = null;
@@ -476,7 +463,6 @@
         updateQRCode();
     };
 
-    // Header Logo
     function loadSavedLogo() {
         const savedLogo = localStorage.getItem('customHeaderLogo');
         if (savedLogo) {
@@ -506,7 +492,6 @@
         document.getElementById('fallbackHeader').style.display = 'block';
     }
 
-    // Auto Date & Bill No
     function setCurrentDate() {
         const today = new Date();
         const dd = String(today.getDate()).padStart(2, '0');
@@ -521,7 +506,6 @@
         document.getElementById('billNo').value = "JR-" + nextNo;
     }
 
-    // Master Options List
     function initMasterItems() {
         let items = JSON.parse(localStorage.getItem('masterItemList'));
         if (!items || items.length === 0) {
@@ -581,7 +565,6 @@
         document.getElementById('customItemDiv').style.display = select.value === 'Other' ? 'flex' : 'none';
     }
 
-    // Calculation & Add Item
     function calculateItemTotal() {
         const qty = parseFloat(document.getElementById('itemQty').value) || 0;
         const rate = parseFloat(document.getElementById('itemRate').value) || 0;
@@ -617,4 +600,153 @@
         tbody.innerHTML = '';
         let total = 0;
 
-    
+        currentBillItems.forEach((item, index) => {
+            total += parseFloat(item.amount);
+            tbody.innerHTML += `
+                <tr>
+                    <td>${item.itemName}</td>
+                    <td>${item.size}</td>
+                    <td>${item.qty}</td>
+                    <td>₹${item.rate}</td>
+                    <td>₹${item.amount}</td>
+                    <td class="delete-col">
+                        <button class="btn-sm btn-delete-sm" onclick="removeItem(${index})">X</button>
+                    </td>
+                </tr>
+            `;
+        });
+
+        document.getElementById('grandTotal').innerText = total.toFixed(2);
+        updateQRCode();
+    }
+
+    function removeItem(index) {
+        currentBillItems.splice(index, 1);
+        renderTable();
+    }
+
+    function loadSavedUpiId() {
+        const savedUpi = localStorage.getItem('savedUpiId') || '';
+        document.getElementById('upiId').value = savedUpi;
+    }
+
+    function saveUpiId() {
+        const val = document.getElementById('upiId').value.trim();
+        localStorage.setItem('savedUpiId', val);
+        updateQRCode();
+    }
+
+    function updateQRCode() {
+        const upiId = document.getElementById('upiId').value.trim();
+        const total = document.getElementById('grandTotal').innerText;
+        const qrImg = document.getElementById('qrCodeImg');
+
+        if (upiId && parseFloat(total) > 0) {
+            const upiUrl = `upi://pay?pa=${upiId}&pn=JAY%20RANJEET&am=${total}&cu=INR`;
+            qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(upiUrl)}`;
+            document.getElementById('qrBox').style.display = 'block';
+        } else {
+            const fallbackUrl = `upi://pay?pa=${upiId || 'pay'}&pn=JAY%20RANJEET`;
+            qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(fallbackUrl)}`;
+        }
+    }
+
+    function saveBill() {
+        if (currentBillItems.length === 0) return alert("Pehle item add karein!");
+
+        const billNo = document.getElementById('billNo').value;
+        const date = document.getElementById('billDate').value;
+        const custName = document.getElementById('custName').value || 'Cash';
+        const custPhone = document.getElementById('custPhone').value || '-';
+        const grandTotal = document.getElementById('grandTotal').innerText;
+
+        let savedBills = JSON.parse(localStorage.getItem('savedBills') || '[]');
+        const billObj = { billNo, date, custName, custPhone, items: currentBillItems, grandTotal };
+
+        if (editingBillIndex !== null) {
+            savedBills[editingBillIndex] = billObj;
+            editingBillIndex = null;
+            alert("Bill Updated Successfully!");
+        } else {
+            savedBills.push(billObj);
+            let currentNum = parseInt(billNo.replace('JR-', ''));
+            localStorage.setItem('lastBillNo', currentNum);
+            alert("Bill Saved Successfully!");
+        }
+
+        localStorage.setItem('savedBills', JSON.stringify(savedBills));
+        loadHistory();
+        resetForm();
+    }
+
+    function resetForm() {
+        currentBillItems = [];
+        renderTable();
+        document.getElementById('custName').value = '';
+        document.getElementById('custPhone').value = '';
+        generateBillNumber();
+    }
+
+    function generatePDF() {
+        if (currentBillItems.length === 0) return alert("Pehle item add karein!");
+        window.print();
+    }
+
+    function toggleHistory() {
+        const hist = document.getElementById('historySection');
+        hist.style.display = hist.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function loadHistory() {
+        const tbody = document.getElementById('historyBody');
+        tbody.innerHTML = '';
+        let savedBills = JSON.parse(localStorage.getItem('savedBills') || '[]');
+
+        savedBills.forEach((bill, index) => {
+            tbody.innerHTML += `
+                <tr>
+                    <td>${bill.billNo}</td>
+                    <td>${bill.date}</td>
+                    <td>${bill.custName}</td>
+                    <td>${bill.custPhone || '-'}</td>
+                    <td>₹${bill.grandTotal}</td>
+                    <td>
+                        <button class="btn-sm btn-edit-sm" onclick="editHistoryBill(${index})">✏️ Edit</button>
+                        <button class="btn-sm btn-print-sm" onclick="printHistoryBill(${index})">🖨️ Print</button>
+                        <button class="btn-sm btn-delete-sm" onclick="deleteHistoryBill(${index})">X</button>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+
+    function editHistoryBill(index) {
+        let savedBills = JSON.parse(localStorage.getItem('savedBills') || '[]');
+        let bill = savedBills[index];
+
+        editingBillIndex = index;
+        document.getElementById('billNo').value = bill.billNo;
+        document.getElementById('billDate').value = bill.date;
+        document.getElementById('custName').value = bill.custName;
+        document.getElementById('custPhone').value = bill.custPhone || '';
+        currentBillItems = bill.items || [];
+        renderTable();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function printHistoryBill(index) {
+        editHistoryBill(index);
+        setTimeout(() => { window.print(); }, 300);
+    }
+
+    function deleteHistoryBill(index) {
+        if (confirm("Kya aap is bill ko delete karna chahte hain?")) {
+            let savedBills = JSON.parse(localStorage.getItem('savedBills') || '[]');
+            savedBills.splice(index, 1);
+            localStorage.setItem('savedBills', JSON.stringify(savedBills));
+            loadHistory();
+        }
+    }
+</script>
+</body>
+</html>

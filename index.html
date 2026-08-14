@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jay Ranjeet - Graphic Design & Marketing Billing App</title>
+    <style>
+        :root {
+            --primary-red: #d32f2f;
+            --dark-red: #b71c1c;
+            --bg-color: #f4f6f9;
+            --text-color: #222;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 15px;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Branding Header with Banner Image Support */
+        .header-banner {
+            text-align: center;
+            border-bottom: 3px solid var(--primary-red);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .header-banner img {
+            max-width: 100%;
+            height: auto;
+            max-height: 140px;
+            object-fit: contain;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .logo-upload-btn {
+            display: inline-block;
+            margin-top: 8px;
+            font-size: 11px;
+            color: #666;
+            cursor: pointer;
+            background: #f0f0f0;
+            padding: 4px 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        /* Fallback HTML Header */
+        .fallback-header {
+            display: none;
+            text-align: center;
+        }
+
+        .fallback-header h1 {
+            color: var(--primary-red);
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+        }
+
+        .fallback-header h3 {
+            font-size: 15px;
+            color: #333;
+            letter-spacing: 2px;
+            margin-top: 4px;
+            font-weight: 700;
+        }
+
+        .fallback-header p {
+            font-size: 13px;
+            color: var(--primary-red);
+            font-weight: 600;
+            margin-top: 6px;
+        }
+
+        /* Meta Info (Bill No & Date) */
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+            background: #fff5f5;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #ffe0e0;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-size: 12px;
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 5px;
+        }
+
+        .form-group input, .form-group select {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            border-color: var(--primary-red);
+        }
+
+        /* Item Input Section */
+        .item-box {
+            background: #fafafa;
+            border: 1px solid #eee;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .item-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 10px;
+        }
+
+        .btn-add {
+            background-color: var(--primary-red);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 15px;
+            font-size: 15px;
+            transition: background 0.2s;
+        }
+
+        .btn-add:hover {
+            background-color: var(--dark-red);
+        }
+
+        /* Item List Manager Box */
+        .item-manager-box {
+            background: #eef6ff;
+            border: 1px solid #cce3ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .item-manager-box h4 {
+            color: #0288d1;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .item-manager-grid {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .item-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .tag {
+            background: #fff;
+            border: 1px solid #0288d1;
+            color: #0288d1;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tag span {
+            color: red;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* Items Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        th {
+            background-color: var(--primary-red);
+            color: white;
+        }
+
+        .grand-total {
+            text-align: right;
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--primary-red);
+            margin-bottom: 20px;
+            padding: 12px;
+            background: #fff5f5;
+            border-radius: 6px;
+            border: 1px solid #ffe0e0;
+        }
+
+        /* Action Buttons */
+        .action-btns {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .btn-save { background-color: #2e7d32; color: white; }
+        .btn-print { background-color: #0288d1; color: white; }
+        .btn-history { background-color: #616161; color: white; }
+        .btn-item-mgr { background-color: #f57c00; color: white; }
+        .btn-delete { background-color: #d32f2f; color: white; padding: 5px 10px; font-size: 12px; border: none; border-radius: 4px; cursor: pointer; }
+
+        /* History Section */
+        .history-section {
+            display: none;
+            margin-top: 30px;
+            border-top: 2px dashed #ccc;
+            padding-top: 20px;
+        }
+
+        /* Print Media Styles */
+        @media print {
+            body { background: white; padding: 0; }
+            .container { box-shadow: none; border: none; width: 100%; max-width: 100%; padding: 0; }
+            .item-box, .btn-add, .action-btns, .history-section, .delete-col, .btn-delete, .logo-upload-btn, .item-manager-box { display: none !important; }
+            input, select { border: none !important; background: transparent !important; -webkit-appearance: none; }
+            th { background-color: #d32f2f !important; color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Header Banner -->
+    <div class="header-banner">
+        <img id="bannerImg" src="logo.png" alt="Jay Ranjeet Graphic Design & Marketing" onerror="showFallbackHeader()">
+        
+        <div class="fallback-header" id="fallbackHeader">
+            <h1>JAY RANJEET</h1>
+            <h3>GRAPHIC DESIGN & MARKETING</h3>
+            <p>Creative Design • Digital Marketing • Printing Solutions</p>
+        </div>
+
+        <label class="logo-upload-btn">
+            🖼️ Change/Upload Header Photo
+            <input type="file" id="logoInput" accept="image/*" style="display:none;" onchange="uploadLogo(event)">
+        </label>
+    </div>
+
+    <!-- Bill Metadata -->
+    <div class="meta-grid">
+        <div class="form-group">
+            <label>Bill No. (Auto)</label>
+            <input type="text" id="billNo" readonly>
+        </div>
+        <div class="form-group">
+            <label>Date (Auto)</label>
+            <input type="text" id="billDate" readonly>
+        </div>
+        <div class="form-group">
+            <label>Customer Name</label>
+            <input type="text" id="custName" placeholder="Client / Customer Name">
+        </div>
+    </div>
+
+    <!-- Manage Items Section Toggle -->
+    <div class="item-manager-box" id="itemManagerBox">
+        <h4>➕ Naye Items Add / Manage Karein</h4>
+        <div class="item-manager-grid">
+            <input type="text" id="newMasterItem" placeholder="Naye item ka naam dalein (e.g. Glow Sign, Flex)" style="flex:1; padding:8px; border:1px solid #ccc; border-radius:4px;">
+            <button onclick="addMasterItem()" style="background:#0288d1; color:white; border:none; padding:8px 15px; border-radius:4px; font-weight:bold; cursor:pointer;">Save Item</button>
+        </div>
+        <p style="font-size:12px; color:#555;">Save kiye gaye options list:</p>
+        <div class="item-tags" id="itemTagsContainer">
+            <!-- Dynamic Item Tags -->
+        </div>
+    </div>
+
+    <!-- Input Form for Bill Items -->
+    <div class="item-box">
+        <div class="item-grid">
+            <div class="form-group">
+                <label>Item Selection</label>
+                <select id="itemSelect" onchange="checkOtherOption()">
+                    <!-- Options populated dynamically -->
+                </select>
+            </div>
+            <div class="form-group" id="customItemDiv" style="display: none;">
+                <label>Custom Item Name</label>
+                <input type="text" id="customItemInput" placeholder="Enter Custom Item">
+            </div>
+            <div class="form-group">
+                <label>Size</label>
+                <input type="text" id="itemSize" inputmode="decimal" placeholder="e.g. 10x12">
+            </div>
+            <div class="form-group">
+                <label>Quantity / Sq.Ft</label>
+                <input type="number" id="itemQty" inputmode="numeric" placeholder="Qty" value="1" oninput="calculateItemTotal()">
+            </div>
+            <div class="form-group">
+                <label>Rate (₹)</label>
+                <input type="number" id="itemRate" inputmode="decimal" placeholder="0.00" oninput="calculateItemTotal()">
+            </div>
+            <div class="form-group">
+                <label>Amount (₹)</label>
+                <input type="number" id="itemAmount" readonly placeholder="0.00">
+            </div>
+        </div>
+        <button class="btn-add" onclick="addItem()">+ Add Item To Bill</button>
+    </div>
+
+    <!-- Items Table -->
+    <table id="billTable">
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Size</th>
+                <th>Qty</th>
+                <th>Rate</th>
+                <th>Total</th>
+                <th class="delete-col">Action</th>
+            </tr>
+        </thead>
+        <tbody id="billItemsBody">
+            <!-- Dynamic Items -->
+        </tbody>
+    </table>
+
+    <!-- Grand Total -->
+    <div class="grand-total">
+        Grand Total: ₹ <span id="grandTotal">0.00</span>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-btns">
+        <button class="btn btn-save" onclick="saveBill()">💾 Save Bill</button>
+        <button class="btn btn-print" onclick="generatePDF()">📄 Save PDF / Print</button>
+        <button class="btn btn-item-mgr" onclick="toggleItemManager()">⚙️ Options List Manage</button>
+        <button class="btn btn-history" onclick="toggleHistory()">📜 Old Bills Record</button>
+    </div>
+
+    <!-- History Section -->
+    <div class="history-section" id="historySection">
+        <h3 style="color: var(--primary-red); margin-bottom: 10px;">Old Bills Record</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Bill No</th>
+                    <th>Date</th>
+                    <th>Customer</th>
+                    <th>Total</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="historyBody">
+                <!-- History Items -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    let currentBillItems = [];
+    const defaultMasterItems = ["D cut bag", "Box bag", "Star flex", "Visiting Card", "Vinyl Print", "Glow Sign Board", "Bill Book", "Letter Head"];
+
+    window.onload = function() {
+        loadSavedLogo();
+        setCurrentDate();
+        generateBillNumber();
+        initMasterItems();
+        loadHistory();
+    };
+
+    // Header Logo handling
+    function loadSavedLogo() {
+        const savedLogo = localStorage.getItem('customHeaderLogo');
+        if (savedLogo) {
+            document.getElementById('bannerImg').src = savedLogo;
+            document.getElementById('bannerImg').style.display = 'block';
+            document.getElementById('fallbackHeader').style.display = 'none';
+        }
+    }
+
+    function uploadLogo(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const base64Image = e.target.result;
+                localStorage.setItem('customHeaderLogo', base64Image);
+                document.getElementById('bannerImg').src = base64Image;
+                document.getElementById('bannerImg').style.display = 'block';
+                document.getElementById('fallbackHeader').style.display = 'none';
+                alert("Header Photo Safaltapoorvak Badal Di Gayi Hai!");
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function showFallbackHeader() {
+        document.getElementById('bannerImg').style.display = 'none';
+        document.getElementById('fallbackHeader').style.display = 'block';
+    }
+
+    // Auto Date Set
+    function setCurrentDate() {
+        const today = new Date();
+        const dd = String(today.getDate()).padStart(2, '0');
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const yyyy = today.getFullYear();
+        document.getElementById('billDate').value = `${dd}/${mm}/${yyyy}`;
+    }
+
+    // Auto Incremental Bill Number
+    function generateBillNumber() {
+        let lastNo = localStorage.getItem('lastBillNo') || 1000;
+        let nextNo = parseInt(lastNo) + 1;
+        document.getElementById('billNo').value = "JR-" + nextNo;
+    }
+
+    // Master Items List Management
+    function initMasterItems() {
+        let items = JSON.parse(localStorage.getItem('masterItemList'));
+        if (!items || items.length === 0) {
+            items = defaultMasterItems;
+            localStorage.setItem('masterItemList', JSON.stringify(items));
+        }
+        populateDropdown(items);
+        renderItemTags(items);
+    }
+
+    function populateDropdown(items) {
+        const select = document.getElementById('itemSelect');
+        select.innerHTML = '';
+        items.forEach(item => {
+            select.innerHTML += `<option value="${item}">${item}</option>`;
+        });
+        select.innerHTML += `<option value="Other">Other (Custom)</option>`;
+        checkOtherOption();
+    }
+
+    function renderItemTags(items) {
+        const container = document.getElementById('itemTagsContainer');
+        container.innerHTML = '';
+        items.forEach((item, idx) => {
+            container.innerHTML += `
+                <div class="tag">
+                    ${item}
+                    <span onclick="removeMasterItem(${idx})">×</span>
+                </div>
+            `;
+        });
+    }
+
+    function addMasterItem() {
+        const input = document.getElementById('newMasterItem');
+        const val = input.value.trim();
+        if (!val) {
+            alert("Kripya item ka naam dalein!");
+            return;
+        }
+
+        let items = JSON.parse(localStorage.getItem('masterItemList')) || [];
+        if (!items.includes(val)) {
+            items.push(val);
+            localStorage.setItem('masterItemList', JSON.stringify(items));
+            initMasterItems();
+            input.value = '';
+            alert(`"${val}" Option List Me Add Ho Gaya!`);
+        } else {
+            alert("Yeh item pehle se list me hai!");
+        }
+    }
+
+    function removeMasterItem(index) {
+        let items = JSON.parse(localStorage.getItem('masterItemList')) || [];
+        items.splice(index, 1);
+        localStorage.setItem('masterItemList', JSON.stringify(items));
+        initMasterItems();
+    }
+
+    function toggleItemManager() {
+        const mgr = document.getElementById('itemManagerBox');
+        mgr.style.display = mgr.style.display === 'block' ? 'none' : 'block';
+    }
+
+    // Show custom text input if 'Other' selected
+    function checkOtherOption() {
+        const select = document.getElementById('itemSelect');
+        const customDiv = document.getElementById('customItemDiv');
+        if (select.value === 'Other') {
+            customDiv.style.display = 'flex';
+        } else {
+            customDiv.style.display = 'none';
+        }
+    }
+
+    // Dynamic Calculation
+    function calculateItemTotal() {
+        const qty = parseFloat(document.getElementById('itemQty').value) || 0;
+        const rate = parseFloat(document.getElementById('itemRate').value) || 0;
+        document.getElementById('itemAmount').value = (qty * rate).toFixed(2);
+    }
+
+    // Add Item to Bill List
+    function addItem() {
+        const select = document.getElementById('itemSelect');
+        let itemName = select.value;
+        if (itemName === 'Other') {
+            itemName = document.getElementById('customItemInput').value.trim();
+            if (!itemName) {
+                alert("Kripya custom item name likhein!");
+                return;
+            }
+        }
+
+        const size = document.getElementById('itemSize').value || '-';
+        const qty = parseFloat(document.getElementById('itemQty').value) || 1;
+        const rate = parseFloat(document.getElementById('itemRate').value) || 0;
+        const amount = (qty * rate).toFixed(2);
+
+        if (rate <= 0) {
+            alert("Kripya sahi rate dalein.");
+            return;
+        }
+
+        currentBillItems.push({ itemName, size, qty, rate, amount });
+        renderTable();
+        
+        // Reset Inputs
+        document.getElementById('itemSize').value = '';
+        document.getElementById('itemRate').value = '';
+        document.getElementById('itemAmount').value = '';
+        document.getElementById('customItemInput').value = '';
+    }
+
+    // Render Items Table
+    function renderTable() {
+        const tbody = document.getElementById('billItemsBody');
+        tbody.innerHTML = '';
+        let total = 0;
+
+        currentBillItems.forEach((item, index) => {
+            total += parseFloat(item.amount);
+            tbody.innerHTML += `
+                <tr>
+                    <td>${item.itemName}</td>
+                    <td>${item.size}</td>
+                    <td>${item.qty}</td>
+                    <td>₹${item.rate}</td>
+                    <td>₹${item.amount}</td>
+                    <td class="delete-col">
+                        <button class="btn-delete" onclick="removeItem(${index})">X</button>
+                    </td>
+                </tr>
+            `;
+        });
+
+        document.getElementById('grandTotal').innerText = total.toFixed(2);
+    }
+
+    // Remove Item
+    function removeItem(index) {
+        currentBillItems.splice(index, 1);
+        renderTable();
+    }
+
+    // Save Bill Offline
+    function saveBill() {
+        if (currentBillItems.length === 0) {
+            alert("Pehle item add karein!");
+            return;
+        }
+
+        const billNo = document.getElementById('billNo').value;
+        const date = document.getElementById('billDate').value;
+        const custName = document.getElementById('custName').value || 'Cash';
+        const grandTotal = document.getElementById('grandTotal').innerText;
+
+        const newBill = {
+            billNo,
+            date,
+            custName,
+            items: currentBillItems,
+            grandTotal
+        };
+
+        let savedBills = JSON.parse(localStorage.getItem('savedBills') || '[]');
+        savedBills.push(newBill);
+        localStorage.setItem('savedBills', JSON.stringify(savedBills));
+
+        let currentNum = parseInt(billNo.replace('JR-', ''));
+        localStorage.setItem('lastBillNo', currentNum);
+
+        alert("Bill Safaltapoorvak Save Ho Gaya!");
+        loadHistory();
+        resetForm();
+    }
+
+    function resetForm() {
+        currentBillItems = [];
+        renderTable();
+        document.getElementById('custName').value = '';
+        generateBillNumber();
+    }
+
+    function generatePDF() {
+        if (currentBillItems.length === 0) {
+            alert("Pehle item add karein!");
+            return;
+        }
+        window.print();
+    }
+
+    function toggleHistory() {
+        const hist = document.getElementById('historySection');
+        hist.style.display = hist.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function loadHistory() {
+        const tbody = document.getElementById('historyBody');
+        tbody.innerHTML = '';
+        let savedBills = JSON.parse(localStorage.getItem('savedBills') || '[]');
+
+        savedBills.reverse().forEach((bill, index) => {
+            tbody.innerHTML += `
+                <tr>
+                    <td>${bill.billNo}</td>
+                    <td>${bill.date}</td>
+                    <td>${bill.custName}</td>
+                    <td>₹${bill.grandTotal}</td>
+                    <td>
+                        <button class="btn-delete" onclick="deleteHistoryBill(${index})">Delete</button>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+
+    function deleteHistoryBill(index) {
+        let savedBills = JSON.parse(localStorage.getItem('savedBills') || '[]');
+        savedBills.reverse();
+        savedBills.splice(index, 1);
+        savedBills.reverse();
+        localStorage.setItem('savedBills', JSON.stringify(savedBills));
+        loadHistory();
+    }
+</script>
+
+</body>
+</html>

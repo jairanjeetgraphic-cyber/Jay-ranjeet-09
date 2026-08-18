@@ -226,10 +226,25 @@
             gap: 15px;
         }
 
+        .payment-summary-box {
+            font-size: 16px;
+            font-weight: bold;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
         .grand-total-box {
             font-size: 20px;
-            font-weight: bold;
             color: var(--primary-red);
+        }
+
+        .paid-box {
+            color: #2e7d32;
+        }
+
+        .due-box {
+            color: #c62828;
         }
 
         .qr-container {
@@ -303,7 +318,7 @@
         @media print {
             body { background: white; padding: 0; }
             .container { box-shadow: none; border: none; width: 100%; max-width: 100%; padding: 0; }
-            .item-box, .btn-add, .action-btns, .history-section, .delete-col, .logo-upload-btn, .item-manager-box, .upi-input-group { display: none !important; }
+            .item-box, .btn-add, .action-btns, .history-section, .delete-col, .logo-upload-btn, .item-manager-box, .upi-input-group, .paid-input-group { display: none !important; }
             input, select { border: none !important; background: transparent !important; -webkit-appearance: none; }
             th { background-color: #d32f2f !important; color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .total-qr-section { border: 1px solid #ccc; }
@@ -312,7 +327,7 @@
 </head>
 <body>
 <div class="container">
-        <!-- Header Banner -->
+    <!-- Header Banner -->
     <div class="header-banner">
         <img id="bannerImg" src="logo.png" alt="Jay Ranjeet Graphic Design & Marketing" onerror="showFallbackHeader()">
         
@@ -345,6 +360,10 @@
         <div class="form-group">
             <label>Phone Number</label>
             <input type="text" id="custPhone" inputmode="tel" placeholder="Mobile No.">
+        </div>
+        <div class="form-group paid-input-group">
+            <label>Paid Amount / जमा राशि (₹)</label>
+            <input type="text" id="paidAmountInput" inputmode="decimal" placeholder="0.00" oninput="calculatePaymentDetails()">
         </div>
     </div>
 
@@ -389,7 +408,8 @@
         </div>
         <button class="btn-add" onclick="addItem()">+ Add Item To Bill</button>
     </div>
-        <!-- Items Table -->
+
+    <!-- Items Table -->
     <table id="billTable">
         <thead>
             <tr>
@@ -406,8 +426,16 @@
 
     <!-- Total Amount & UPI QR Code Section -->
     <div class="total-qr-section">
-        <div class="grand-total-box">
-            Grand Total: ₹ <span id="grandTotal">0.00</span>
+        <div class="payment-summary-box">
+            <div class="grand-total-box">
+                Grand Total: ₹ <span id="grandTotal">0.00</span>
+            </div>
+            <div class="paid-box">
+                Advance/Paid (जमा): ₹ <span id="paidAmountDisplay">0.00</span>
+            </div>
+            <div class="due-box">
+                Balance Due (बाकी): ₹ <span id="dueAmountDisplay">0.00</span>
+            </div>
         </div>
 
         <div class="qr-container">
@@ -439,8 +467,9 @@
                     <th>Bill No</th>
                     <th>Date</th>
                     <th>Customer</th>
-                    <th>Phone</th>
                     <th>Total</th>
+                    <th>Paid</th>
+                    <th>Balance</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -448,6 +477,7 @@
         </table>
     </div>
 </div>
+
 <script>
     let currentBillItems = [];
     let editingBillIndex = null;
@@ -617,7 +647,17 @@
         });
 
         document.getElementById('grandTotal').innerText = total.toFixed(2);
+        calculatePaymentDetails();
         updateQRCode();
+    }
+
+    function calculatePaymentDetails() {
+        const grandTotal = parseFloat(document.getElementById('grandTotal').innerText) || 0;
+        const paidAmount = parseFloat(document.getElementById('paidAmountInput').value) || 0;
+        const dueAmount = grandTotal - paidAmount;
+
+        document.getElementById('paidAmountDisplay').innerText = paidAmount.toFixed(2);
+        document.getElementById('dueAmountDisplay').innerText = (dueAmount < 0 ? 0 : dueAmount).toFixed(2);
     }
 
     function removeItem(index) {
@@ -638,11 +678,13 @@
 
     function updateQRCode() {
         const upiId = document.getElementById('upiId').value.trim();
-        const total = document.getElementById('grandTotal').innerText;
+        const due = document.getElementById('dueAmountDisplay').innerText;
+        const grandTotal = document.getElementById('grandTotal').innerText;
+        const paymentAmount = parseFloat(due) > 0 ? due : grandTotal;
         const qrImg = document.getElementById('qrCodeImg');
 
-        if (upiId && parseFloat(total) > 0) {
-            const upiUrl = `upi://pay?pa=${upiId}&pn=JAY%20RANJEET&am=${total}&cu=INR`;
+        if (upiId && parseFloat(paymentAmount) > 0) {
+            const upiUrl = `upi://pay?pa=${upiId}&pn=JAY%20RANJEET&am=${paymentAmount}&cu=INR`;
             qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(upiUrl)}`;
             document.getElementById('qrBox').style.display = 'block';
         } else {
@@ -659,9 +701,11 @@
         const custName = document.getElementById('custName').value || 'Cash';
         const custPhone = document.getElementById('custPhone').value || '-';
         const grandTotal = document.getElementById('grandTotal').innerText;
+        const paidAmount = document.getElementById('paidAmountDisplay').innerText;
+        const dueAmount = document.getElementById('dueAmountDisplay').innerText;
 
         let savedBills = JSON.parse(localStorage.getItem('savedBills') || '[]');
-        const billObj = { billNo, date, custName, custPhone, items: currentBillItems, grandTotal };
+        const billObj = { billNo, date, custName, custPhone, items: currentBillItems, grandTotal, paidAmount, dueAmount };
 
         if (editingBillIndex !== null) {
             savedBills[editingBillIndex] = billObj;
@@ -684,12 +728,26 @@
         renderTable();
         document.getElementById('custName').value = '';
         document.getElementById('custPhone').value = '';
+        document.getElementById('paidAmountInput').value = '';
+        calculatePaymentDetails();
         generateBillNumber();
     }
 
     function generatePDF() {
         if (currentBillItems.length === 0) return alert("Pehle item add karein!");
+        
+        const custName = document.getElementById('custName').value.trim() || 'Customer';
+        const billNo = document.getElementById('billNo').value.trim();
+        const originalTitle = document.title;
+        
+        // Dynamic Title Set Karein (Save as PDF name me same naam show hoga)
+        document.title = `Bill_${custName.replace(/\s+/g, '_')}_${billNo}`;
+        
         window.print();
+
+        setTimeout(() => {
+            document.title = originalTitle;
+        }, 1000);
     }
 
     function toggleHistory() {
@@ -708,8 +766,9 @@
                     <td>${bill.billNo}</td>
                     <td>${bill.date}</td>
                     <td>${bill.custName}</td>
-                    <td>${bill.custPhone || '-'}</td>
                     <td>₹${bill.grandTotal}</td>
+                    <td>₹${bill.paidAmount || '0.00'}</td>
+                    <td>₹${bill.dueAmount || '0.00'}</td>
                     <td>
                         <button class="btn-sm btn-edit-sm" onclick="editHistoryBill(${index})">✏️ Edit</button>
                         <button class="btn-sm btn-print-sm" onclick="printHistoryBill(${index})">🖨️ Print</button>
@@ -729,6 +788,7 @@
         document.getElementById('billDate').value = bill.date;
         document.getElementById('custName').value = bill.custName;
         document.getElementById('custPhone').value = bill.custPhone || '';
+        document.getElementById('paidAmountInput').value = bill.paidAmount || '0';
         currentBillItems = bill.items || [];
         renderTable();
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -736,7 +796,7 @@
 
     function printHistoryBill(index) {
         editHistoryBill(index);
-        setTimeout(() => { window.print(); }, 300);
+        setTimeout(() => { generatePDF(); }, 300);
     }
 
     function deleteHistoryBill(index) {

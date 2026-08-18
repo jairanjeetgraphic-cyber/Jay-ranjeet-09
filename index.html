@@ -1,94 +1,13 @@
-
-Conversation with Gemini
-This HTML document contains the source code for a web-based billing application for Jay Ranjeet - Graphic Design & Marketing.  
-HTML
-
-Key Technical Features:
-
-Language & Styling: Built using HTML5, CSS3, and JavaScript, with built-in responsive styling and print-optimized CSS (@media print).  
-HTML
-
-Bill Generation & Metadata: Tracks bill details including auto-generated bill numbers (prefixed with JR-), date, customer name, and phone number.  
-HTML
-
-Item Management: Pre-configured with default items (D cut bag, Box bag, Star flex, Visiting Card, Vinyl Print, Glow Sign Board, Bill Book, Letter Head) with options to dynamically add, edit, or remove custom menu items.  
-HTML
-
-Dynamic Calculations: Automatically updates individual line items (calculating quantity/sq.ft × rate) and computes the grand total in real-time.  
-HTML
-
-Payment Integration: Dynamically generates a UPI payment QR code using the qrserver.com API based on the configured UPI ID and grand total.  
-HTML
-
-Local Storage & History: Uses localStorage to retain custom branding logos, saved UPI details, default item lists, and previous billing history (with options to edit, print, or delete past bills).  
-HTML
-
-update krna hai new
-
-Aap is code me kya update ya changes karna chahte hain?
-
-Mujhe batayein, jaise ki:
-
-New Features: Koi naya button, tax/discount calculation, ya WhatsApp par bill bhejne ka option add karna?
-
-Design/UI: Colors, layout, ya font style me badlav?
-
-Bug Fix / Logic: Calculations ya print/PDF me koi dikkat aa rahi hai use sahi karna?
-
-Aap apni zaroorat batayein, main code update karke de dunga!
-
-paise jama huye or baaki ka and pdf customer ke name se save ho or
-
-english language only
-
-sabse niche mera naam and contac
-
-name sahil vashishtha
-
-contac 7067842840 / 9111799751
-
-Your updated HTML file is ready:
-
-HTML icon
-index
- HTML 
-Open
-Key Updates & Enhancements Made:
-Amount Paid & Balance Due Tracking:
-
-Added input field for Amount Paid (Amount Paid (₹)).
-
-Added automatic real-time calculation for Balance Due (Balance Due: ₹).
-
-UPI QR code now updates dynamically to display the remaining balance due if present.
-
-Customer Name-based PDF Export:
-
-Updated the generatePDF() function to dynamically change the webpage title to <Customer_Name>_<Bill_No> before printing.
-
-When saving as a PDF via the print dialog, the browser will now automatically default the PDF file name to the customer's name.
-
-Developer / Manager Footer Credits:
-
-Added credit text at the bottom:
-Developed & Managed by: Sahil Vashishtha | Contact: 7067842840 / 9111799751
-
-Language Localization:
-
-Converted all UI text, popups, labels, buttons, and alert prompts exclusively to English.
-
-
-
-
-Gemini is AI and can make mistakes.
-
-Analyzing
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jay Ranjeet - Graphic Design & Marketing Billing App</title>
+    
+    <!-- Browser Tab JR Favicon Icon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23d32f2f'/><text x='50%' y='65%' font-size='50' font-weight='bold' font-family='sans-serif' fill='white' text-anchor='middle'>JR</text></svg>">
+
     <style>
         :root {
             --primary-red: #d32f2f;
@@ -327,11 +246,6 @@ Analyzing
             border-color: var(--primary-red);
         }
 
-        .summary-box.paid-amount {
-            color: #2e7d32;
-            border-color: #2e7d32;
-        }
-
         .summary-box.balance-due {
             color: #c62828;
             border-color: #c62828;
@@ -420,6 +334,11 @@ Analyzing
         .footer-credits span {
             color: var(--primary-red);
             font-weight: bold;
+        }
+
+        @page {
+            size: letter portrait;
+            margin: 10mm;
         }
 
         @media print {
@@ -535,6 +454,16 @@ Analyzing
                 Grand Total: ₹ <span id="grandTotal">0.00</span>
             </div>
             <div class="form-group">
+                <label style="font-weight:bold; color:#0288d1;">Payment Method</label>
+                <select id="paymentMethod" style="padding: 10px; font-weight: bold; border-color: #0288d1;">
+                    <option value="Cash">Cash</option>
+                    <option value="UPI / QR">UPI / QR Code</option>
+                    <option value="Online / NetBanking">Online / NetBanking</option>
+                    <option value="Card">Credit / Debit Card</option>
+                    <option value="Cheque">Cheque</option>
+                </select>
+            </div>
+            <div class="form-group">
                 <label style="font-weight:bold; color:#2e7d32;">Amount Paid (₹)</label>
                 <input type="number" id="amountPaid" placeholder="0.00" value="0" oninput="calculateBalance()" style="padding: 10px; font-weight: bold; border-color: #2e7d32;">
             </div>
@@ -558,7 +487,7 @@ Analyzing
     <!-- Action Buttons -->
     <div class="action-btns">
         <button class="btn btn-save" onclick="saveBill()">💾 Save Bill</button>
-        <button class="btn btn-print" onclick="generatePDF()">📄 Save PDF / Print</button>
+        <button class="btn btn-print" onclick="generatePDF()">📄 Save PDF / Print (Letter Size)</button>
         <button class="btn btn-item-mgr" onclick="toggleItemManager()">⚙️ Options List Manage</button>
         <button class="btn btn-history" onclick="toggleHistory()">📜 Old Bills Record</button>
     </div>
@@ -573,6 +502,7 @@ Analyzing
                     <th>Date</th>
                     <th>Customer</th>
                     <th>Phone</th>
+                    <th>Mode</th>
                     <th>Total</th>
                     <th>Paid</th>
                     <th>Balance</th>
@@ -809,12 +739,13 @@ Analyzing
         const date = document.getElementById('billDate').value;
         const custName = document.getElementById('custName').value.trim() || 'Cash';
         const custPhone = document.getElementById('custPhone').value || '-';
+        const paymentMethod = document.getElementById('paymentMethod').value;
         const grandTotal = document.getElementById('grandTotal').innerText;
         const amountPaid = parseFloat(document.getElementById('amountPaid').value) || 0;
         const balanceDue = document.getElementById('balanceDue').innerText;
 
         let savedBills = JSON.parse(localStorage.getItem('savedBills') || '[]');
-        const billObj = { billNo, date, custName, custPhone, items: currentBillItems, grandTotal, amountPaid, balanceDue };
+        const billObj = { billNo, date, custName, custPhone, paymentMethod, items: currentBillItems, grandTotal, amountPaid, balanceDue };
 
         if (editingBillIndex !== null) {
             savedBills[editingBillIndex] = billObj;
@@ -837,6 +768,7 @@ Analyzing
         renderTable();
         document.getElementById('custName').value = '';
         document.getElementById('custPhone').value = '';
+        document.getElementById('paymentMethod').value = 'Cash';
         document.getElementById('amountPaid').value = '0';
         document.getElementById('balanceDue').innerText = '0.00';
         generateBillNumber();
@@ -848,16 +780,13 @@ Analyzing
         const custName = document.getElementById('custName').value.trim() || 'Customer';
         const billNo = document.getElementById('billNo').value || 'Bill';
         
-        // Sanitize customer name for valid filename
         const cleanCustName = custName.replace(/[^a-zA-Z0-9_-]/g, '_');
         const originalTitle = document.title;
         
-        // Set document title so print-to-PDF defaults to Customer Name
         document.title = `${cleanCustName}_${billNo}`;
         
         window.print();
         
-        // Restore title after print dialog closes
         setTimeout(() => {
             document.title = originalTitle;
         }, 1000);
@@ -880,6 +809,7 @@ Analyzing
                     <td>${bill.date}</td>
                     <td>${bill.custName}</td>
                     <td>${bill.custPhone || '-'}</td>
+                    <td>${bill.paymentMethod || 'Cash'}</td>
                     <td>₹${bill.grandTotal}</td>
                     <td>₹${bill.amountPaid || '0.00'}</td>
                     <td>₹${bill.balanceDue || '0.00'}</td>
@@ -902,6 +832,7 @@ Analyzing
         document.getElementById('billDate').value = bill.date;
         document.getElementById('custName').value = bill.custName;
         document.getElementById('custPhone').value = bill.custPhone || '';
+        document.getElementById('paymentMethod').value = bill.paymentMethod || 'Cash';
         document.getElementById('amountPaid').value = bill.amountPaid || 0;
         currentBillItems = bill.items || [];
         renderTable();
@@ -924,5 +855,3 @@ Analyzing
 </script>
 </body>
 </html>
-index.html
-Displaying index.html.

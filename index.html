@@ -4,10 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jay Ranjeet - Graphic Design & Marketing Billing App</title>
-    
-    <!-- Browser Tab JR Favicon Icon (Base64 Encoded for Instant Loading) -->
-    <link id="dynamicFavicon" rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIwIiBmaWxsPSIjZDMyZjJmIi8+PHRleHQgeD0iNTAlIiB5PSI2NSUiIGZvbnQtc2l6ZT0iNTAiIGZvbnQtd2VpZ2h0PSJib2xkIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkpSPC90ZXh0Pjwvc3ZnPg==">
-
     <style>
         :root {
             --primary-red: #d32f2f;
@@ -336,11 +332,6 @@
             font-weight: bold;
         }
 
-        @page {
-            size: letter portrait;
-            margin: 10mm;
-        }
-
         @media print {
             body { background: white; padding: 0; }
             .container { box-shadow: none; border: none; width: 100%; max-width: 100%; padding: 0; }
@@ -454,16 +445,6 @@
                 Grand Total: ₹ <span id="grandTotal">0.00</span>
             </div>
             <div class="form-group">
-                <label style="font-weight:bold; color:#0288d1;">Payment Method</label>
-                <select id="paymentMethod" style="padding: 10px; font-weight: bold; border-color: #0288d1;">
-                    <option value="Cash">Cash</option>
-                    <option value="UPI / QR">UPI / QR Code</option>
-                    <option value="Online / NetBanking">Online / NetBanking</option>
-                    <option value="Card">Credit / Debit Card</option>
-                    <option value="Cheque">Cheque</option>
-                </select>
-            </div>
-            <div class="form-group">
                 <label style="font-weight:bold; color:#2e7d32;">Amount Paid (₹)</label>
                 <input type="number" id="amountPaid" placeholder="0.00" value="0" oninput="calculateBalance()" style="padding: 10px; font-weight: bold; border-color: #2e7d32;">
             </div>
@@ -487,7 +468,7 @@
     <!-- Action Buttons -->
     <div class="action-btns">
         <button class="btn btn-save" onclick="saveBill()">💾 Save Bill</button>
-        <button class="btn btn-print" onclick="generatePDF()">📄 Save PDF / Print (Letter Size)</button>
+        <button class="btn btn-print" onclick="generatePDF()">📄 Save PDF / Print</button>
         <button class="btn btn-item-mgr" onclick="toggleItemManager()">⚙️ Options List Manage</button>
         <button class="btn btn-history" onclick="toggleHistory()">📜 Old Bills Record</button>
     </div>
@@ -502,7 +483,6 @@
                     <th>Date</th>
                     <th>Customer</th>
                     <th>Phone</th>
-                    <th>Mode</th>
                     <th>Total</th>
                     <th>Paid</th>
                     <th>Balance</th>
@@ -525,7 +505,6 @@
     const defaultMasterItems = ["D cut bag", "Box bag", "Star flex", "Visiting Card", "Vinyl Print", "Glow Sign Board", "Bill Book", "Letter Head"];
 
     window.onload = function() {
-        forceFaviconJR();
         loadSavedLogo();
         setCurrentDate();
         generateBillNumber();
@@ -534,41 +513,6 @@
         loadHistory();
         updateQRCode();
     };
-
-    // Canvas fallback to guarantee "JR" icon load in Chrome/Edge offline
-    function forceFaviconJR() {
-        try {
-            const canvas = document.createElement('canvas');
-            canvas.width = 64;
-            canvas.height = 64;
-            const ctx = canvas.getContext('2d');
-
-            // Red Rounded Rectangle Background
-            ctx.fillStyle = '#d32f2f';
-            ctx.beginPath();
-            ctx.roundRect(0, 0, 64, 64, 12);
-            ctx.fill();
-
-            // White Bold "JR" Text
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 32px sans-serif';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText('JR', 32, 34);
-
-            // Update Icon
-            const iconUrl = canvas.toDataURL('image/png');
-            let link = document.getElementById('dynamicFavicon');
-            if (!link) {
-                link = document.createElement('link');
-                link.rel = 'icon';
-                document.head.appendChild(link);
-            }
-            link.href = iconUrl;
-        } catch (e) {
-            console.log("Canvas Favicon generation failed", e);
-        }
-    }
 
     function loadSavedLogo() {
         const savedLogo = localStorage.getItem('customHeaderLogo');
@@ -775,13 +719,12 @@
         const date = document.getElementById('billDate').value;
         const custName = document.getElementById('custName').value.trim() || 'Cash';
         const custPhone = document.getElementById('custPhone').value || '-';
-        const paymentMethod = document.getElementById('paymentMethod').value;
         const grandTotal = document.getElementById('grandTotal').innerText;
         const amountPaid = parseFloat(document.getElementById('amountPaid').value) || 0;
         const balanceDue = document.getElementById('balanceDue').innerText;
 
         let savedBills = JSON.parse(localStorage.getItem('savedBills') || '[]');
-        const billObj = { billNo, date, custName, custPhone, paymentMethod, items: currentBillItems, grandTotal, amountPaid, balanceDue };
+        const billObj = { billNo, date, custName, custPhone, items: currentBillItems, grandTotal, amountPaid, balanceDue };
 
         if (editingBillIndex !== null) {
             savedBills[editingBillIndex] = billObj;
@@ -804,7 +747,6 @@
         renderTable();
         document.getElementById('custName').value = '';
         document.getElementById('custPhone').value = '';
-        document.getElementById('paymentMethod').value = 'Cash';
         document.getElementById('amountPaid').value = '0';
         document.getElementById('balanceDue').innerText = '0.00';
         generateBillNumber();
@@ -845,7 +787,6 @@
                     <td>${bill.date}</td>
                     <td>${bill.custName}</td>
                     <td>${bill.custPhone || '-'}</td>
-                    <td>${bill.paymentMethod || 'Cash'}</td>
                     <td>₹${bill.grandTotal}</td>
                     <td>₹${bill.amountPaid || '0.00'}</td>
                     <td>₹${bill.balanceDue || '0.00'}</td>
@@ -868,7 +809,6 @@
         document.getElementById('billDate').value = bill.date;
         document.getElementById('custName').value = bill.custName;
         document.getElementById('custPhone').value = bill.custPhone || '';
-        document.getElementById('paymentMethod').value = bill.paymentMethod || 'Cash';
         document.getElementById('amountPaid').value = bill.amountPaid || 0;
         currentBillItems = bill.items || [];
         renderTable();

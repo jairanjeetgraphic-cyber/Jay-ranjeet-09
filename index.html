@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jay Ranjeet - Graphic Design & Marketing Billing App</title>
     
-    <!-- Browser Tab JR Favicon Icon -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23d32f2f'/><text x='50%' y='65%' font-size='50' font-weight='bold' font-family='sans-serif' fill='white' text-anchor='middle'>JR</text></svg>">
+    <!-- Browser Tab JR Favicon Icon (Base64 Encoded for Instant Loading) -->
+    <link id="dynamicFavicon" rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIwIiBmaWxsPSIjZDMyZjJmIi8+PHRleHQgeD0iNTAlIiB5PSI2NSUiIGZvbnQtc2l6ZT0iNTAiIGZvbnQtd2VpZ2h0PSJib2xkIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkpSPC90ZXh0Pjwvc3ZnPg==">
 
     <style>
         :root {
@@ -525,6 +525,7 @@
     const defaultMasterItems = ["D cut bag", "Box bag", "Star flex", "Visiting Card", "Vinyl Print", "Glow Sign Board", "Bill Book", "Letter Head"];
 
     window.onload = function() {
+        forceFaviconJR();
         loadSavedLogo();
         setCurrentDate();
         generateBillNumber();
@@ -533,6 +534,41 @@
         loadHistory();
         updateQRCode();
     };
+
+    // Canvas fallback to guarantee "JR" icon load in Chrome/Edge offline
+    function forceFaviconJR() {
+        try {
+            const canvas = document.createElement('canvas');
+            canvas.width = 64;
+            canvas.height = 64;
+            const ctx = canvas.getContext('2d');
+
+            // Red Rounded Rectangle Background
+            ctx.fillStyle = '#d32f2f';
+            ctx.beginPath();
+            ctx.roundRect(0, 0, 64, 64, 12);
+            ctx.fill();
+
+            // White Bold "JR" Text
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 32px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('JR', 32, 34);
+
+            // Update Icon
+            const iconUrl = canvas.toDataURL('image/png');
+            let link = document.getElementById('dynamicFavicon');
+            if (!link) {
+                link = document.createElement('link');
+                link.rel = 'icon';
+                document.head.appendChild(link);
+            }
+            link.href = iconUrl;
+        } catch (e) {
+            console.log("Canvas Favicon generation failed", e);
+        }
+    }
 
     function loadSavedLogo() {
         const savedLogo = localStorage.getItem('customHeaderLogo');

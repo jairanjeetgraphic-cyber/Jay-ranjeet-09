@@ -1088,10 +1088,12 @@
         let payAmount = balanceDue > 0 ? balanceDue : parseFloat(document.getElementById('grandTotal').innerText) || 0;
 
         if (upiId && payAmount > 0) {
-            const upiUrl = `upi://pay?pa=${upiId}&pn=JAY%20RANJEET&am=${payAmount.toFixed(2)}&cu=INR`; qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(upiUrl)}`;
+            const upiUrl = `upi://pay?pa=${upiId}&pn=JAY%20RANJEET&am=${payAmount.toFixed(2)}&cu=INR`;
+            qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(upiUrl)}`;
             document.getElementById('qrBox').style.display = 'block';
         } else {
-            const fallbackUrl = `upi://pay?pa=${upiId \vert{}\vert{} 'pay'}&pn=JAY\%20RANJEET`; qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(fallbackUrl)}`;
+            const fallbackUrl = `upi://pay?pa=${upiId || 'pay'}&pn=JAY%20RANJEET`;
+            qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(fallbackUrl)}`;
         }
     }
 
@@ -1440,4 +1442,182 @@
                     <td>${entry.date}</td>
                     <td><strong>#${entry.lotNo}</strong></td>
                     <td><strong>${qty}</strong></td>
-                    <td>₹${rate.toFixed(2
+                    <td>₹${rate.toFixed(2)}</td>
+                    <td><strong>₹${amount.toFixed(2)}</strong></td>
+                    <td><span class="badge-shirt ${badgeClass}">${entry.shirtType}</span></td>
+                    <td>${entry.karigar}</td>
+                    <td class="delete-col">
+                        <button class="btn-sm btn-edit-sm" onclick="editDataEntry(${entry.id})">✏️ Edit</button>
+                        <button class="btn-sm btn-delete-sm" onclick="deleteDataEntry(${entry.id})">X</button>
+                    </td>
+                </tr>
+            `;
+        });
+
+        document.getElementById('halfQtyTotal').innerText = halfTotalQty;
+        document.getElementById('fullQtyTotal').innerText = fullTotalQty;
+        document.getElementById('overallAmountTotal').innerText = grandAmountTotal.toFixed(2);
+    }
+
+    function editDataEntry(id) {
+        const entries = partyFolders[activeParty] || [];
+        const entry = entries.find(e => e.id === id);
+        if (!entry) return;
+
+        editingEntryId = id;
+        document.getElementById('entryDate').value = entry.date;
+        document.getElementById('entryLotNo').value = entry.lotNo;
+        document.getElementById('entryQty').value = entry.qty;
+        document.getElementById('entryRate').value = entry.rate || '';
+        document.getElementById('entryKarigar').value = entry.karigar === '-' ? '' : entry.karigar;
+        selectShirtType(entry.shirtType, false);
+
+        document.getElementById('entryFormTitle').innerText = `✏️ Editing Lot #${entry.lotNo} (${activeParty})`;
+        document.getElementById('saveEntryBtn').innerText = "✅ Update Entry";
+        document.getElementById('cancelEditEntryBtn').style.display = "inline-block";
+        window.scrollTo({ top: 150, behavior: 'smooth' });
+    }
+
+    function cancelEntryEdit() {
+        editingEntryId = null;
+        document.getElementById('entryDate').value = getTodayFormatted();
+        document.getElementById('entryQty').value = '';
+        document.getElementById('entryKarigar').value = '';
+        document.getElementById('entryFormTitle').innerText = "➕ New Production / Lot Entry";
+        document.getElementById('saveEntryBtn').innerText = "💾 Save Entry (Enter Key / Click)";
+        document.getElementById('cancelEditEntryBtn').style.display = "none";
+
+        const savedShirt = localStorage.getItem('jr_sticky_shirt_type') || 'Half';
+        selectShirtType(savedShirt, false);
+        updateNextLotNumber();
+    }
+
+    function deleteDataEntry(id) {
+        if (confirm("Kya aap is entry ko delete karna chahte hain?")) {
+            partyFolders[activeParty] = partyFolders[activeParty].filter(e => e.id !== id);
+            savePartyFoldersToStorage();
+            populatePartyDropdown();
+            renderPartyEntries();
+            updateNextLotNumber();
+        }
+    }
+
+    function updateKarigarSuggestions() {
+        const datalist = document.getElementById('karigarSuggestions');
+        const names = new Set();
+        Object.values(partyFolders).forEach(list => {
+            list.forEach(item => {
+                if (item.karigar && item.karigar !== '-') names.add(item.karigar);
+            });
+        });
+        datalist.innerHTML = '';
+        names.forEach(name => {
+            datalist.innerHTML += `<option value="${name}">`;
+        });
+    }
+
+    // ==========================================
+    // PDF SAVE / PRINT FUNCTIONS (LOGO HIDDEN)
+    // ==========================================
+    function saveCurrentPartyPDF() {
+        const entries = partyFolders[activeParty] || [];
+        if (entries.length === 0) {
+            return alert(`"${activeParty}" folder mein abhi koi entry nahi hai!`);
+        }
+
+        const cleanPartyName = activeParty.replace(/[^a-zA-Z0-9_-]/g, '_');
+        const originalTitle = document.title;
+        document.title = `${cleanPartyName}_Production_Report`;
+
+        document.body.classList.add('printing-data-entry');
+        window.print();
+
+        setTimeout(() => {
+            document.body.classList.remove('printing-data-entry');
+            document.title = originalTitle;
+        }, 1000);
+    }
+
+    function saveAllPartiesPDF() {
+        const printArea = document.getElementById('allPartiesPrintArea');
+        printArea.innerHTML = '';
+        let hasAnyData = false;
+
+        Object.keys(partyFolders).forEach(partyName => {
+            const entries = partyFolders[partyName];
+            if (entries && entries.length > 0) {
+                hasAnyData = true;
+                let halfQty = 0;
+                let fullQty = 0;
+                let partyAmountTotal = 0;
+                let rowsHtml = '';
+
+                entries.forEach(e => {
+                    const qty = parseFloat(e.qty) || 0;
+                    const rate = parseFloat(e.rate) || 0;
+                    const amount = e.amount !== undefined ? e.amount : (qty * rate);
+                    partyAmountTotal += amount;
+
+                    if (e.shirtType === 'Half') halfQty += qty;
+                    else fullQty += qty;
+
+                    rowsHtml += `
+                        <tr>
+                            <td>${e.date}</td>
+                            <td><strong>#${e.lotNo}</strong></td>
+                            <td><strong>${qty}</strong></td>
+                            <td>₹${rate.toFixed(2)}</td>
+                            <td>₹${amount.toFixed(2)}</td>
+                            <td>${e.shirtType}</td>
+                            <td>${e.karigar}</td>
+                        </tr>
+                    `;
+                });
+
+                printArea.innerHTML += `
+                    <div style="margin-bottom: 25px; page-break-inside: avoid;">
+                        <div class="folder-stats" style="margin-bottom: 8px;">
+                            <div>📂 Party: <strong style="color:#f9b208;">${partyName}</strong></div>
+                            <div>👕 Half Qty: <strong>${halfQty}</strong></div>
+                            <div>👔 Full Qty: <strong>${fullQty}</strong></div>
+                            <div>💰 Total: ₹ <strong>${partyAmountTotal.toFixed(2)}</strong></div>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Lot No.</th>
+                                    <th>Quantity</th>
+                                    <th>Rate</th>
+                                    <th>Amount</th>
+                                    <th>Shirt Type</th>
+                                    <th>Karigar Name</th>
+                                </tr>
+                            </thead>
+                            <tbody>${rowsHtml}</tbody>
+                        </table>
+                    </div>
+                `;
+            }
+        });
+
+        if (!hasAnyData) {
+            return alert("Abhi kisi bhi Party folder mein koi data nahi hai!");
+        }
+
+        const originalTitle = document.title;
+        document.title = `Jay_Ranjeet_All_Parties_Report`;
+        document.body.classList.add('printing-all-parties');
+        document.body.classList.add('printing-data-entry');
+
+        window.print();
+
+        setTimeout(() => {
+            document.body.classList.remove('printing-all-parties');
+            document.body.classList.remove('printing-data-entry');
+            document.title = originalTitle;
+        }, 1000);
+    }
+</script>
+</body>
+</html>

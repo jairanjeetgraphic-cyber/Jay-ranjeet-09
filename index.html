@@ -382,6 +382,7 @@
         .btn-history { background-color: #334155; }
         .btn-item-mgr { background-color: #d97706; }
         .btn-pdf-party { background-color: var(--primary-pink); }
+        .btn-whatsapp { background-color: #16a34a; }
 
         .btn-sm {
             padding: 5px 8px;
@@ -429,7 +430,7 @@
 
         .party-controls {
             display: grid;
-            grid-template-columns: 1fr auto;
+            grid-template-columns: 1fr auto auto;
             gap: 10px;
             align-items: end;
         }
@@ -708,8 +709,9 @@
             <div class="party-folder-header">
                 <h3>📁 Party Folder Selection</h3>
                 <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                    <button class="btn-sm btn-pdf-party" style="padding:8px 14px; font-size:13px;" onclick="saveCurrentPartyPDF()">📄 Save Party PDF (Direct Open)</button>
-                    <button class="btn-sm btn-edit-sm" style="padding:8px 14px; font-size:13px;" onclick="saveAllPartiesPDF()">📑 Save All Parties PDF</button>
+                    <button class="btn-sm btn-pdf-party" style="padding:8px 14px; font-size:13px;" onclick="saveCurrentPartyPDF()">📄 Save Party PDF</button>
+                    <button class="btn-sm btn-whatsapp" style="padding:8px 14px; font-size:13px;" onclick="sharePartyWhatsApp()">💬 Share WhatsApp</button>
+                    <button class="btn-sm btn-edit-sm" style="padding:8px 14px; font-size:13px;" onclick="saveAllPartiesPDF()">📑 All Parties PDF</button>
                 </div>
             </div>
 
@@ -718,7 +720,8 @@
                     <label>Select Active Party Folder</label>
                     <select id="partyFolderSelect" onchange="onPartyChange()"></select>
                 </div>
-                <button class="btn-sm btn-delete-sm" style="padding:10px 12px;" onclick="deleteCurrentPartyFolder()" title="Delete Selected Party Folder">🗑️ Delete Folder</button>
+                <button class="btn-sm btn-edit-sm" style="padding:10px 12px; background:#0284c7;" onclick="renameCurrentPartyFolder()" title="Rename Party Folder">✏️ Rename</button>
+                <button class="btn-sm btn-delete-sm" style="padding:10px 12px;" onclick="deleteCurrentPartyFolder()" title="Delete Selected Party Folder">🗑️ Delete</button>
             </div>
 
             <div class="new-party-box">
@@ -730,16 +733,20 @@
         <!-- Folder Summary & Detailed Totals Bar -->
         <div class="folder-stats">
             <div>📂 Party: <strong id="activeFolderNameLabel" style="color:var(--accent-yellow);">General</strong></div>
-            <div>👕 Half Qty: <strong id="halfQtyTotal">0</strong> (₹<span id="halfAmountTotal">0.00</span>)</div>
-            <div>👔 Full Qty: <strong id="fullQtyTotal">0</strong> (₹<span id="fullAmountTotal">0.00</span>)</div>
+            <div>👕 Half: <strong id="halfQtyTotal">0</strong> (₹<span id="halfAmountTotal">0.00</span>)</div>
+            <div>👔 Full: <strong id="fullQtyTotal">0</strong> (₹<span id="fullAmountTotal">0.00</span>)</div>
             <div>📦 Total Qty: <strong id="grandQtyTotal">0</strong></div>
             <div>💰 Grand Total: ₹ <strong id="overallAmountTotal" style="color:var(--accent-yellow);">0.00</strong></div>
         </div>
 
-        <!-- Data Entry Input Box -->
+        <!-- Data Entry Input Box with Date Option -->
         <div class="item-box" style="border-left: 4px solid var(--primary-pink);">
             <h4 id="entryFormTitle" style="color:var(--primary-navy); margin-bottom:12px; font-size:15px;">➕ New Production / Lot Entry</h4>
             <div class="item-grid">
+                <div class="form-group">
+                    <label>Date</label>
+                    <input type="text" id="entryDate" onkeydown="handleFormEnter(event)">
+                </div>
                 <div class="form-group">
                     <label>Lot Number (Auto +1)</label>
                     <input type="number" id="entryLotNo" placeholder="e.g. 101" onkeydown="handleFormEnter(event)">
@@ -771,11 +778,12 @@
             </div>
         </div>
 
-        <!-- Party Entries Table (Date Removed) -->
+        <!-- Party Entries Table with Date Restored -->
         <div class="table-responsive">
             <table>
                 <thead>
                     <tr>
+                        <th>Date</th>
                         <th>Lot No.</th>
                         <th>Quantity</th>
                         <th>Shirt Type</th>
@@ -924,6 +932,7 @@
     function setCurrentDate() {
         const formatted = getTodayFormatted();
         document.getElementById('billDate').value = formatted;
+        document.getElementById('entryDate').value = formatted;
     }
 
     // ==========================================
@@ -1271,6 +1280,28 @@
         updateNextLotNumber();
     }
 
+    function renameCurrentPartyFolder() {
+        const newName = prompt(`"${activeParty}" folder ka naya naam daalein:`, activeParty);
+        if (!newName) return;
+        const trimmed = newName.trim();
+
+        if (!trimmed) return alert("Naam khali nahi ho sakta!");
+        if (partyFolders[trimmed] && trimmed !== activeParty) {
+            return alert("Is naam se folder pehle hi maujood hai!");
+        }
+
+        if (trimmed !== activeParty) {
+            partyFolders[trimmed] = partyFolders[activeParty];
+            delete partyFolders[activeParty];
+            activeParty = trimmed;
+            localStorage.setItem('jr_active_party', activeParty);
+            savePartyFoldersToStorage();
+            populatePartyDropdown();
+            renderPartyEntries();
+            alert("Party folder ka naam successfully badal diya gaya hai!");
+        }
+    }
+
     function onPartyChange() {
         activeParty = document.getElementById('partyFolderSelect').value;
         localStorage.setItem('jr_active_party', activeParty);
@@ -1351,6 +1382,7 @@
     }
 
     function saveDataEntry() {
+        const date = document.getElementById('entryDate').value.trim() || getTodayFormatted();
         const lotNo = document.getElementById('entryLotNo').value.trim();
         const qty = document.getElementById('entryQty').value.trim();
         const rate = document.getElementById('entryRate').value.trim() || 0;
@@ -1372,6 +1404,7 @@
             if (idx !== -1) {
                 partyFolders[activeParty][idx] = {
                     id: editingEntryId,
+                    date,
                     lotNo: parseInt(lotNo) || lotNo,
                     qty: numericQty,
                     rate: numericRate,
@@ -1387,6 +1420,7 @@
         } else {
             partyFolders[activeParty].push({
                 id: Date.now(),
+                date,
                 lotNo: parseInt(lotNo) || lotNo,
                 qty: numericQty,
                 rate: numericRate,
@@ -1401,6 +1435,7 @@
         renderPartyEntries();
         updateKarigarSuggestions();
 
+        document.getElementById('entryDate').value = getTodayFormatted();
         document.getElementById('entryQty').value = '';
         document.getElementById('entryKarigar').value = '';
         updateNextLotNumber();
@@ -1439,6 +1474,7 @@
 
             tbody.innerHTML += `
                 <tr>
+                    <td>${entry.date || getTodayFormatted()}</td>
                     <td><strong>#${entry.lotNo}</strong></td>
                     <td><strong>${qty}</strong></td>
                     <td><span class="badge-shirt ${badgeClass}">${entry.shirtType}</span></td>
@@ -1467,6 +1503,7 @@
         if (!entry) return;
 
         editingEntryId = id;
+        document.getElementById('entryDate').value = entry.date || getTodayFormatted();
         document.getElementById('entryLotNo').value = entry.lotNo;
         document.getElementById('entryQty').value = entry.qty;
         document.getElementById('entryKarigar').value = entry.karigar === '-' ? '' : entry.karigar;
@@ -1481,6 +1518,7 @@
 
     function cancelEntryEdit() {
         editingEntryId = null;
+        document.getElementById('entryDate').value = getTodayFormatted();
         document.getElementById('entryQty').value = '';
         document.getElementById('entryKarigar').value = '';
         document.getElementById('entryFormTitle').innerText = "➕ New Production / Lot Entry";
@@ -1517,7 +1555,7 @@
     }
 
     // ==========================================
-    // PDF SAVE / PRINT FUNCTIONS (DIRECT OPEN)
+    // PDF SAVE & WHATSAPP SHARE FUNCTIONS
     // ==========================================
     function saveCurrentPartyPDF() {
         const entries = partyFolders[activeParty] || [];
@@ -1538,6 +1576,43 @@
         }, 1000);
     }
 
+    function sharePartyWhatsApp() {
+        const entries = partyFolders[activeParty] || [];
+        if (entries.length === 0) {
+            return alert(`"${activeParty}" folder mein abhi koi entry share karne ke liye nahi hai!`);
+        }
+
+        let halfQty = 0, halfAmt = 0, fullQty = 0, fullAmt = 0, totalQty = 0, totalAmt = 0;
+        let text = `📋 *JAY RANJEET - PRODUCTION REPORT*\n`;
+        text += `📂 Party Name: *${activeParty}*\n`;
+        text += `----------------------------------\n`;
+
+        entries.forEach((e, idx) => {
+            const qty = parseFloat(e.qty) || 0;
+            const rate = parseFloat(e.rate) || 0;
+            const amt = e.amount !== undefined ? e.amount : (qty * rate);
+            
+            totalQty += qty;
+            totalAmt += amt;
+            if (e.shirtType === 'Half') { halfQty += qty; halfAmt += amt; }
+            else { fullQty += qty; fullAmt += amt; }
+
+            text += `${idx + 1}. Date: ${e.date || '-'} | Lot: #${e.lotNo} | Qty: ${qty} (${e.shirtType}) | Rate: ₹${rate} | Amt: ₹${amt} | Karigar: ${e.karigar}\n`;
+        });
+
+        text += `----------------------------------\n`;
+        text += `👕 Half Qty: ${halfQty} (₹${halfAmt.toFixed(2)})\n`;
+        text += `👔 Full Qty: ${fullQty} (₹${fullAmt.toFixed(2)})\n`;
+        text += `📦 Total Qty: ${totalQty}\n`;
+        text += `💰 Grand Total Amount: ₹${totalAmt.toFixed(2)}\n`;
+        text += `----------------------------------\n`;
+        text += `_Developed by Jay Ranjeet Graphics_`;
+
+        const encoded = encodeURIComponent(text);
+        const whatsappUrl = `https://wa.me/?text=${encoded}`;
+        window.open(whatsappUrl, '_blank');
+    }
+
     function saveAllPartiesPDF() {
         const printArea = document.getElementById('allPartiesPrintArea');
         printArea.innerHTML = '';
@@ -1547,12 +1622,8 @@
             const entries = partyFolders[partyName];
             if (entries && entries.length > 0) {
                 hasAnyData = true;
-                let halfQty = 0;
-                let halfAmt = 0;
-                let fullQty = 0;
-                let fullAmt = 0;
-                let partyTotalQty = 0;
-                let partyAmountTotal = 0;
+                let halfQty = 0, halfAmt = 0, fullQty = 0, fullAmt = 0;
+                let partyTotalQty = 0, partyAmountTotal = 0;
                 let rowsHtml = '';
 
                 entries.forEach(e => {
@@ -1563,16 +1634,12 @@
                     partyTotalQty += qty;
                     partyAmountTotal += amount;
 
-                    if (e.shirtType === 'Half') {
-                        halfQty += qty;
-                        halfAmt += amount;
-                    } else {
-                        fullQty += qty;
-                        fullAmt += amount;
-                    }
+                    if (e.shirtType === 'Half') { halfQty += qty; halfAmt += amount; }
+                    else { fullQty += qty; fullAmt += amount; }
 
                     rowsHtml += `
                         <tr>
+                            <td>${e.date || '-'}</td>
                             <td><strong>#${e.lotNo}</strong></td>
                             <td><strong>${qty}</strong></td>
                             <td>${e.shirtType}</td>
@@ -1594,6 +1661,7 @@
                         <table>
                             <thead>
                                 <tr>
+                                    <th>Date</th>
                                     <th>Lot No.</th>
                                     <th>Quantity</th>
                                     <th>Shirt Type</th>

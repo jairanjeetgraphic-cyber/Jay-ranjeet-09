@@ -3,18 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jay Ranjeet - Graphic Design & Marketing Billing App</title>
+    <title>Jay Ranjeet - Billing & Data Entry App</title>
     
-    <!-- Browser Tab JR Favicon Icon -->
-    <link id="dynamicFavicon" rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIwIiBmaWxsPSIjZTkxZTYzIi8+PHRleHQgeD0iNTAlIiB5PSI2NSUiIGZvbnQtc2l6ZT0iNTAiIGZvbnQtd2VpZ2h0PSJib2xkIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkpSPC90ZXh0Pjwvc3ZnPg==">
+    <!-- Browser Tab JR Favicon Icon (Navy & Magenta Theme) -->
+    <link id="dynamicFavicon" rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIwIiBmaWxsPSIjMEIyMjRCIi8+PHRleHQgeD0iNTAlIiB5PSI2NSUiIGZvbnQtc2l6ZT0iNTAiIGZvbnQtd2VpZ2h0PSJib2xkIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZmlsbD0iI0U0MUE2RCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+SlI8L3RleHQ+PC9zdmc+">
 
     <style>
         :root {
-            --primary-blue: #1a2b4c;
-            --primary-pink: #e91e63;
-            --dark-pink: #c2185b;
-            --bg-color: #f4f6f9;
-            --text-color: #222;
+            --primary-navy: #0B224B;
+            --dark-navy: #061530;
+            --primary-pink: #E41A6D;
+            --dark-pink: #c2125a;
+            --accent-yellow: #FDB913;
+            --bg-color: #f0f3f8;
+            --text-color: #1e2430;
         }
 
         * {
@@ -36,14 +38,16 @@
             background: #ffffff;
             padding: 20px;
             border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 20px rgba(11, 34, 75, 0.12);
+            border-top: 5px solid var(--primary-navy);
         }
 
+        /* Header Banner */
         .header-banner {
             text-align: center;
             border-bottom: 3px solid var(--primary-pink);
             padding-bottom: 15px;
-            margin-bottom: 20px;
+            margin-bottom: 18px;
             position: relative;
         }
 
@@ -60,12 +64,13 @@
             display: inline-block;
             margin-top: 8px;
             font-size: 11px;
-            color: #666;
+            color: var(--primary-navy);
             cursor: pointer;
-            background: #f0f0f0;
-            padding: 4px 10px;
+            background: #eef2f9;
+            padding: 4px 12px;
             border-radius: 4px;
-            border: 1px solid #ccc;
+            border: 1px solid #c5d1e8;
+            font-weight: 600;
         }
 
         .fallback-header {
@@ -74,54 +79,82 @@
         }
 
         .fallback-header h1 {
-            color: var(--primary-blue);
             font-size: 32px;
-            font-weight: 800;
+            font-weight: 900;
             letter-spacing: 1.5px;
+            color: var(--primary-navy);
+        }
+
+        .fallback-header h1 span {
+            color: var(--primary-pink);
         }
 
         .fallback-header h3 {
-            font-size: 15px;
-            color: var(--primary-pink);
-            letter-spacing: 2px;
-            margin-top: 4px;
+            font-size: 14px;
+            color: #222;
+            letter-spacing: 3px;
+            margin-top: 3px;
             font-weight: 700;
         }
 
+        .fallback-header .tagline-pill {
+            display: inline-block;
+            background: var(--primary-navy);
+            color: #fff;
+            padding: 5px 18px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-top: 6px;
+            border-bottom: 3px solid var(--accent-yellow);
+        }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: #eef2f9;
+            padding: 6px;
+            border-radius: 8px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            background: transparent;
+            color: var(--primary-navy);
+            transition: all 0.25s ease;
+        }
+
+        .tab-btn.active {
+            background: var(--primary-navy);
+            color: #ffffff;
+            box-shadow: 0 3px 8px rgba(11, 34, 75, 0.25);
+        }
+
+        .tab-btn.active.pink-tab {
+            background: var(--primary-pink);
+            color: #ffffff;
+            box-shadow: 0 3px 8px rgba(228, 26, 109, 0.25);
+        }
+
+        /* Form & Grid Styles */
         .meta-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
             gap: 12px;
             margin-bottom: 20px;
-            background: #fff0f5;
+            background: #f4f7fc;
             padding: 15px;
             border-radius: 8px;
-            border: 1px solid #f8bbd0;
-        }
-
-        /* Production & Data Entry Section Styling */
-        .production-section {
-            background: #e8f4fd;
-            border: 1px solid #bbe1fa;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-
-        .production-section h3 {
-            color: var(--primary-blue);
-            font-size: 15px;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .production-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 10px;
-            margin-bottom: 12px;
+            border: 1px solid #d5dfef;
         }
 
         .form-group {
@@ -132,25 +165,27 @@
         .form-group label {
             font-size: 12px;
             font-weight: bold;
-            color: #555;
+            color: var(--primary-navy);
             margin-bottom: 5px;
         }
 
         .form-group input, .form-group select {
             padding: 9px;
-            border: 1px solid #ccc;
+            border: 1px solid #c3cde0;
             border-radius: 6px;
             font-size: 14px;
             outline: none;
+            background: #fff;
         }
 
         .form-group input:focus, .form-group select:focus {
             border-color: var(--primary-pink);
+            box-shadow: 0 0 0 2px rgba(228, 26, 109, 0.12);
         }
 
         .item-box {
-            background: #fafafa;
-            border: 1px solid #eee;
+            background: #fdf6f9;
+            border: 1px solid #f7d2e2;
             padding: 15px;
             border-radius: 8px;
             margin-bottom: 20px;
@@ -158,7 +193,7 @@
 
         .item-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
             gap: 10px;
         }
 
@@ -173,15 +208,26 @@
             width: 100%;
             margin-top: 15px;
             font-size: 15px;
+            transition: background 0.2s;
         }
 
         .btn-add:hover {
             background-color: var(--dark-pink);
         }
 
+        .btn-navy {
+            background-color: var(--primary-navy);
+            color: white;
+        }
+
+        .btn-navy:hover {
+            background-color: var(--dark-navy);
+        }
+
+        /* Item List Manager */
         .item-manager-box {
-            background: #eef6ff;
-            border: 1px solid #cce3ff;
+            background: #eef2f9;
+            border: 1px solid #c5d1e8;
             padding: 15px;
             border-radius: 8px;
             margin-bottom: 20px;
@@ -189,7 +235,7 @@
         }
 
         .item-manager-box h4 {
-            color: var(--primary-blue);
+            color: var(--primary-navy);
             margin-bottom: 10px;
             font-size: 14px;
         }
@@ -209,20 +255,27 @@
 
         .tag {
             background: #fff;
-            border: 1px solid var(--primary-blue);
-            color: var(--primary-blue);
-            padding: 4px 8px;
+            border: 1px solid var(--primary-navy);
+            color: var(--primary-navy);
+            padding: 4px 10px;
             border-radius: 4px;
             font-size: 12px;
+            font-weight: 600;
             display: flex;
             align-items: center;
             gap: 6px;
         }
 
         .tag span {
-            color: red;
+            color: var(--primary-pink);
             cursor: pointer;
             font-weight: bold;
+            font-size: 14px;
+        }
+
+        /* Tables */
+        .table-responsive {
+            overflow-x: auto;
         }
 
         table {
@@ -232,22 +285,23 @@
         }
 
         th, td {
-            border: 1px solid #ddd;
+            border: 1px solid #d5dfef;
             padding: 9px;
             text-align: left;
             font-size: 14px;
         }
 
         th {
-            background-color: var(--primary-blue);
+            background-color: var(--primary-navy);
             color: white;
         }
 
+        /* Payment Summary */
         .payment-summary-section {
-            background: #fff0f5;
+            background: #f4f7fc;
             padding: 15px;
             border-radius: 8px;
-            border: 1px solid #f8bbd0;
+            border: 1px solid #d5dfef;
             margin-bottom: 20px;
         }
 
@@ -264,17 +318,17 @@
             padding: 10px;
             border-radius: 6px;
             background: #ffffff;
-            border: 1px solid #ddd;
+            border: 1px solid #c3cde0;
         }
 
         .summary-box.grand-total {
-            color: var(--primary-pink);
-            border-color: var(--primary-pink);
+            color: var(--primary-navy);
+            border-color: var(--primary-navy);
         }
 
         .summary-box.balance-due {
-            color: #c2185b;
-            border-color: #c2185b;
+            color: var(--primary-pink);
+            border-color: var(--primary-pink);
         }
 
         .qr-container {
@@ -284,7 +338,7 @@
             background: #fff;
             padding: 12px;
             border-radius: 8px;
-            border: 1px solid #ddd;
+            border: 1px solid #d5dfef;
             flex-wrap: wrap;
             gap: 15px;
         }
@@ -302,9 +356,10 @@
         .qr-box span {
             font-size: 11px;
             font-weight: bold;
-            color: #444;
+            color: var(--primary-navy);
         }
 
+        /* Action Buttons */
         .action-btns {
             display: flex;
             gap: 10px;
@@ -313,6 +368,7 @@
 
         .btn {
             flex: 1;
+            min-width: 150px;
             padding: 12px;
             border: none;
             border-radius: 6px;
@@ -320,674 +376,9 @@
             cursor: pointer;
             text-align: center;
             font-size: 14px;
-        }
-
-        .btn-save { background-color: #2e7d32; color: white; }
-        .btn-print { background-color: var(--primary-blue); color: white; }
-        .btn-excel { background-color: #00897b; color: white; }
-        .btn-history { background-color: #616161; color: white; }
-        .btn-item-mgr { background-color: #f57c00; color: white; }
-
-        .btn-sm {
-            padding: 5px 8px;
-            font-size: 12px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
             color: white;
-            margin-right: 2px;
-        }
-        .btn-edit-sm { background-color: #f57c00; }
-        .btn-print-sm { background-color: var(--primary-blue); }
-        .btn-delete-sm { background-color: #e91e63; }
-
-        .history-section {
-            display: none;
-            margin-top: 30px;
-            border-top: 2px dashed #ccc;
-            padding-top: 20px;
         }
 
-        .footer-credits {
-            margin-top: 30px;
-            padding-top: 15px;
-            border-top: 1px solid #e0e0e0;
-            text-align: center;
-            font-size: 13px;
-            color: #555;
-            font-weight: 600;
-        }
-
-        .footer-credits span {
-            color: var(--primary-pink);
-            font-weight: bold;
-        }
-
-        @page {
-            size: letter portrait;
-            margin: 10mm;
-        }
-
-        @media print {
-            body { background: white; padding: 0; }
-            .container { box-shadow: none; border: none; width: 100%; max-width: 100%; padding: 0; }
-            .item-box, .btn-add, .action-btns, .history-section, .delete-col, .logo-upload-btn, .item-manager-box, .upi-input-group, .production-section { display: none !important; }
-            input, select { border: none !important; background: transparent !important; -webkit-appearance: none; }
-            th { background-color: var(--primary-blue) !important; color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .payment-summary-section { border: 1px solid #ccc; }
-            .footer-credits { border-top: 1px solid #ccc; font-size: 12px; }
-        }
-    </style>
-</head>
-<body>
-<div class="container">
-    <!-- Header Banner -->
-    <div class="header-banner">
-        <img id="bannerImg" src="logo.png" alt="Jay Ranjeet Graphic Design & Marketing" onerror="showFallbackHeader()">
-        
-        <div class="fallback-header" id="fallbackHeader">
-            <h1>JAY RANJEET</h1>
-            <h3>GRAPHIC DESIGN & MARKETING</h3>
-            <p>Creative Design • Digital Marketing • Printing Solutions</p>
-        </div>
-
-        <label class="logo-upload-btn">
-            🖼️ Change/Upload Header Photo
-            <input type="file" id="logoInput" accept="image/*" style="display:none;" onchange="uploadLogo(event)">
-        </label>
-    </div>
-
-    <!-- Bill Metadata -->
-    <div class="meta-grid">
-        <div class="form-group">
-            <label>Bill No. (Auto)</label>
-            <input type="text" id="billNo" readonly>
-        </div>
-        <div class="form-group">
-            <label>Date (Auto)</label>
-            <input type="text" id="billDate" readonly>
-        </div>
-        <div class="form-group">
-            <label>Customer Name</label>
-            <input type="text" id="custName" placeholder="Client Name">
-        </div>
-        <div class="form-group">
-            <label>Phone Number</label>
-            <input type="text" id="custPhone" inputmode="tel" placeholder="Mobile No.">
-        </div>
-    </div>
-
-    <!-- Production / Data Entry Details Section -->
-    <div class="production-section">
-        <h3>📊 Production & Data Entry Details</h3>
-        <div class="production-grid">
-            <div class="form-group">
-                <label>Serial Number (Sr.No)</label>
-                <input type="text" id="serialNo" placeholder="e.g. 001">
-            </div>
-            <div class="form-group">
-                <label>Lot Number</label>
-                <input type="text" id="lotNo" placeholder="e.g. LOT-A1">
-            </div>
-            <div class="form-group">
-                <label>Shirt Type (Half/Full)</label>
-                <select id="shirtType" onchange="saveShirtPreference()">
-                    <option value="Half Shirt">Half Shirt</option>
-                    <option value="Full Shirt">Full Shirt</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Karigar Name</label>
-                <input type="text" id="karigarName" placeholder="Worker Name">
-            </div>
-        </div>
-    </div>
-
-    <!-- Item List Manager Box -->
-    <div class="item-manager-box" id="itemManagerBox">
-        <h4>➕ Manage Options List</h4>
-        <div class="item-manager-grid">
-            <input type="text" id="newMasterItem" placeholder="New item name (e.g. Glow Sign, Flex)" style="flex:1; padding:8px; border:1px solid #ccc; border-radius:4px;">
-            <button onclick="addMasterItem()" style="background:var(--primary-blue); color:white; border:none; padding:8px 15px; border-radius:4px; font-weight:bold; cursor:pointer;">Save Option</button>
-        </div>
-        <p style="font-size:12px; color:#555;">Saved Options:</p>
-        <div class="item-tags" id="itemTagsContainer"></div>
-    </div>
-
-    <!-- Bill Input Form -->
-    <div class="item-box">
-        <div class="item-grid">
-            <div class="form-group">
-                <label>Item Selection</label>
-                <select id="itemSelect" onchange="checkOtherOption()"></select>
-            </div>
-            <div class="form-group" id="customItemDiv" style="display: none;">
-                <label>Custom Item Name</label>
-                <input type="text" id="customItemInput" placeholder="Enter Custom Item">
-            </div>
-            <div class="form-group">
-                <label>Size</label>
-                <input type="text" id="itemSize" placeholder="e.g. 10x12">
-            </div>
-            <div class="form-group">
-                <label>Quantity / Sq.Ft</label>
-                <input type="text" id="itemQty" inputmode="decimal" placeholder="Qty" value="1" oninput="calculateItemTotal()">
-            </div>
-            <div class="form-group">
-                <label>Rate (₹)</label>
-                <input type="text" id="itemRate" inputmode="decimal" placeholder="0.00" oninput="calculateItemTotal()">
-            </div>
-            <div class="form-group">
-                <label>Amount (₹)</label>
-                <input type="text" id="itemAmount" readonly placeholder="0.00">
-            </div>
-        </div>
-        <button class="btn-add" onclick="addItem()">+ Add Item To Bill</button>
-    </div>
-
-    <!-- Items Table -->
-    <table id="billTable">
-        <thead>
-            <tr>
-                <th>Item</th>
-                <th>Size</th>
-                <th>Qty</th>
-                <th>Rate</th>
-                <th>Total</th>
-                <th class="delete-col">Action</th>
-            </tr>
-        </thead>
-        <tbody id="billItemsBody"></tbody>
-    </table>
-
-    <!-- Payment Summary Section -->
-    <div class="payment-summary-section">
-        <div class="payment-grid">
-            <div class="summary-box grand-total">
-                Grand Total: ₹ <span id="grandTotal">0.00</span>
-            </div>
-            <div class="form-group">
-                <label style="font-weight:bold; color:#2e7d32;">Amount Paid (₹)</label>
-                <input type="number" id="amountPaid" placeholder="0.00" value="0" oninput="calculateBalance()" style="padding: 10px; font-weight: bold; border-color: #2e7d32;">
-            </div>
-            <div class="summary-box balance-due">
-                Balance Due: ₹ <span id="balanceDue">0.00</span>
-            </div>
-        </div>
-
-        <div class="qr-container">
-            <div class="upi-input-group">
-                <label style="font-size: 11px; font-weight: bold; display: block; color: #555;">Set UPI ID:</label>
-                <input type="text" id="upiId" placeholder="e.g. 9876543210@upi" onchange="saveUpiId()" style="font-size: 12px; padding: 5px; border: 1px solid #ccc; border-radius: 4px; width: 140px;">
-            </div>
-            <div class="qr-box" id="qrBox">
-                <img id="qrCodeImg" src="" alt="Payment QR Code">
-                <span>Scan to Pay</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- Action Buttons -->
-    <div class="action-btns">
-        <button class="btn btn-save" onclick="saveBill()">💾 Save Bill</button>
-        <button class="btn btn-print" onclick="generatePDF()">📄 Save PDF / Print</button>
-        <button class="btn btn-excel" onclick="exportToExcel()">📥 Download Excel Sheet</button>
-        <button class="btn btn-item-mgr" onclick="toggleItemManager()">⚙️ Options Manage</button>
-        <button class="btn btn-history" onclick="toggleHistory()">📜 Old Records</button>
-    </div>
-
-    <!-- History Section -->
-    <div class="history-section" id="historySection">
-        <h3 style="color: var(--primary-blue); margin-bottom: 10px;">Saved Bills & Data Records</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Bill No</th>
-                    <th>Date</th>
-                    <th>Customer</th>
-                    <th>Sr.No / Lot</th>
-                    <th>Shirt</th>
-                    <th>Karigar</th>
-                    <th>Total</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody id="historyBody"></tbody>
-        </table>
-    </div>
-
-    <!-- Footer Credits -->
-    <div class="footer-credits">
-        Developed & Managed by: <span>Sahil Vashishtha</span> | Contact: <span>7067842840 / 9111799751</span>
-    </div>
-</div>
-
-<script>
-    let currentBillItems = [];
-    let editingBillIndex = null;
-    const defaultMasterItems = ["D cut bag", "Box bag", "Star flex", "Visiting Card", "Vinyl Print", "Glow Sign Board", "Bill Book", "Letter Head"];
-
-    window.onload = function() {
-        forceFaviconJR();
-        loadSavedLogo();
-        setCurrentDate();
-        generateBillNumber();
-        initMasterItems();
-        loadSavedUpiId();
-        loadShirtPreference();
-        loadHistory();
-        updateQRCode();
-    };
-
-    function forceFaviconJR() {
-        try {
-            const canvas = document.createElement('canvas');
-            canvas.width = 64;
-            canvas.height = 64;
-            const ctx = canvas.getContext('2d');
-
-            ctx.fillStyle = '#e91e63';
-            ctx.beginPath();
-            ctx.roundRect(0, 0, 64, 64, 12);
-            ctx.fill();
-
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 32px sans-serif';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText('JR', 32, 34);
-
-            const iconUrl = canvas.toDataURL('image/png');
-            let link = document.getElementById('dynamicFavicon');
-            if (!link) {
-                link = document.createElement('link');
-                link.rel = 'icon';
-                document.head.appendChild(link);
-            }
-            link.href = iconUrl;
-        } catch (e) {
-            console.log("Canvas Favicon generation failed", e);
-        }
-    }
-
-    function loadSavedLogo() {
-        const savedLogo = localStorage.getItem('customHeaderLogo');
-        if (savedLogo) {
-            document.getElementById('bannerImg').src = savedLogo;
-            document.getElementById('bannerImg').style.display = 'block';
-            document.getElementById('fallbackHeader').style.display = 'none';
-        }
-    }
-
-    function uploadLogo(event) {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const base64Image = e.target.result;
-                localStorage.setItem('customHeaderLogo', base64Image);
-                document.getElementById('bannerImg').src = base64Image;
-                document.getElementById('bannerImg').style.display = 'block';
-                document.getElementById('fallbackHeader').style.display = 'none';
-            };
-            reader.readAsDataURL(file);
-        }
-    }
-
-    function showFallbackHeader() {
-        document.getElementById('bannerImg').style.display = 'none';
-        document.getElementById('fallbackHeader').style.display = 'block';
-    }
-
-    function setCurrentDate() {
-        const today = new Date();
-        const dd = String(today.getDate()).padStart(2, '0');
-        const mm = String(today.getMonth() + 1).padStart(2, '0');
-        const yyyy = today.getFullYear();
-        document.getElementById('billDate').value = `${dd}/${mm}/${yyyy}`;
-    }
-
-    function generateBillNumber() {
-        let lastNo = localStorage.getItem('lastBillNo') || 1000;
-        let nextNo = parseInt(lastNo) + 1;
-        document.getElementById('billNo').value = "JR-" + nextNo;
-    }
-
-    function saveShirtPreference() {
-        const val = document.getElementById('shirtType').value;
-        localStorage.setItem('persistentShirtType', val);
-    }
-
-    function loadShirtPreference() {
-        const saved = localStorage.getItem('persistentShirtType');
-        if (saved) {
-            document.getElementById('shirtType').value = saved;
-        }
-    }
-
-    function initMasterItems() {
-        let items = JSON.parse(localStorage.getItem('masterItemList'));
-        if (!items || items.length === 0) {
-            items = defaultMasterItems;
-            localStorage.setItem('masterItemList', JSON.stringify(items));
-        }
-        populateDropdown(items);
-        renderItemTags(items);
-    }
-
-    function populateDropdown(items) {
-        const select = document.getElementById('itemSelect');
-        select.innerHTML = '';
-        items.forEach(item => {
-            select.innerHTML += `<option value="${item}">${item}</option>`;
-        });
-        select.innerHTML += `<option value="Other">Other (Custom)</option>`;
-        checkOtherOption();
-    }
-
-    function renderItemTags(items) {
-        const container = document.getElementById('itemTagsContainer');
-        container.innerHTML = '';
-        items.forEach((item, idx) => {
-            container.innerHTML += `<div class="tag">${item}<span onclick="removeMasterItem(${idx})">×</span></div>`;
-        });
-    }
-
-    function addMasterItem() {
-        const input = document.getElementById('newMasterItem');
-        const val = input.value.trim();
-        if (!val) return alert("Please enter item name!");
-
-        let items = JSON.parse(localStorage.getItem('masterItemList')) || [];
-        if (!items.includes(val)) {
-            items.push(val);
-            localStorage.setItem('masterItemList', JSON.stringify(items));
-            initMasterItems();
-            input.value = '';
-        }
-    }
-
-    function removeMasterItem(index) {
-        let items = JSON.parse(localStorage.getItem('masterItemList')) || [];
-        items.splice(index, 1);
-        localStorage.setItem('masterItemList', JSON.stringify(items));
-        initMasterItems();
-    }
-
-    function toggleItemManager() {
-        const mgr = document.getElementById('itemManagerBox');
-        mgr.style.display = mgr.style.display === 'block' ? 'none' : 'block';
-    }
-
-    function checkOtherOption() {
-        const select = document.getElementById('itemSelect');
-        document.getElementById('customItemDiv').style.display = select.value === 'Other' ? 'flex' : 'none';
-    }
-
-    function calculateItemTotal() {
-        const qty = parseFloat(document.getElementById('itemQty').value) || 0;
-        const rate = parseFloat(document.getElementById('itemRate').value) || 0;
-        document.getElementById('itemAmount').value = (qty * rate).toFixed(2);
-    }
-
-    function addItem() {
-        const select = document.getElementById('itemSelect');
-        let itemName = select.value;
-        if (itemName === 'Other') {
-            itemName = document.getElementById('customItemInput').value.trim();
-            if (!itemName) return alert("Enter custom item name!");
-        }
-
-        const size = document.getElementById('itemSize').value || '-';
-        const qty = document.getElementById('itemQty').value || '1';
-        const rate = parseFloat(document.getElementById('itemRate').value) || 0;
-        const amount = (parseFloat(qty) * rate || rate).toFixed(2);
-
-        if (rate <= 0) return alert("Please enter a valid rate.");
-
-        currentBillItems.push({ itemName, size, qty, rate, amount });
-        renderTable();
-
-        document.getElementById('itemSize').value = '';
-        document.getElementById('itemRate').value = '';
-        document.getElementById('itemAmount').value = '';
-        document.getElementById('customItemInput').value = '';
-    }
-
-    function renderTable() {
-        const tbody = document.getElementById('billItemsBody');
-        tbody.innerHTML = '';
-        let total = 0;
-
-        currentBillItems.forEach((item, index) => {
-            total += parseFloat(item.amount);
-            tbody.innerHTML += `
-                <tr>
-                    <td>${item.itemName}</td>
-                    <td>${item.size}</td>
-                    <td>${item.qty}</td>
-                    <td>₹${item.rate}</td>
-                    <td>₹${item.amount}</td>
-                    <td class="delete-col">
-                        <button class="btn-sm btn-delete-sm" onclick="removeItem(${index})">X</button>
-                    </td>
-                </tr>
-            `;
-        });
-
-        document.getElementById('grandTotal').innerText = total.toFixed(2);
-        calculateBalance();
-    }
-
-    function calculateBalance() {
-        const grandTotal = parseFloat(document.getElementById('grandTotal').innerText) || 0;
-        const amountPaid = parseFloat(document.getElementById('amountPaid').value) || 0;
-        const balance = grandTotal - amountPaid;
-        document.getElementById('balanceDue').innerText = balance.toFixed(2);
-        updateQRCode();
-    }
-
-    function removeItem(index) {
-        currentBillItems.splice(index, 1);
-        renderTable();
-    }
-
-    function loadSavedUpiId() {
-        const savedUpi = localStorage.getItem('savedUpiId') || '';
-        document.getElementById('upiId').value = savedUpi;
-    }
-
-    function saveUpiId() {
-        const val = document.getElementById('upiId').value.trim();
-        localStorage.setItem('savedUpiId', val);
-        updateQRCode();
-    }
-
-    function updateQRCode() {
-        const upiId = document.getElementById('upiId').value.trim();
-        const balanceDue = parseFloat(document.getElementById('balanceDue').innerText) || 0;
-        const qrImg = document.getElementById('qrCodeImg');
-
-        let payAmount = balanceDue > 0 ? balanceDue : parseFloat(document.getElementById('grandTotal').innerText) || 0;
-
-        if (upiId && payAmount > 0) {
-            const upiUrl = `upi://pay?pa=${upiId}&pn=JAY%20RANJEET&am=${payAmount.toFixed(2)}&cu=INR`;
-            qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(upiUrl)}`;
-            document.getElementById('qrBox').style.display = 'block';
-        } else {
-            const fallbackUrl = `upi://pay?pa=${upiId || 'pay'}&pn=JAY%20RANJEET`;
-            qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(fallbackUrl)}`;
-        }
-    }
-
-    function saveBill() {
-        if (currentBillItems.length === 0) return alert("Please add at least one item!");
-
-        const billNo = document.getElementById('billNo').value;
-        const date = document.getElementById('billDate').value;
-        const custName = document.getElementById('custName').value.trim() || 'Cash';
-        const custPhone = document.getElementById('custPhone').value || '-';
-        
-        // Production fields
-        const serialNo = document.getElementById('serialNo').value.trim() || '-';
-        const lotNo = document.getElementById('lotNo').value.trim() || '-';
-        const shirtType = document.getElementById('shirtType').value;
-        const karigarName = document.getElementById('karigarName').value.trim() || '-';
-
-        const grandTotal = document.getElementById('grandTotal').innerText;
-        const amountPaid = parseFloat(document.getElementById('amountPaid').value) || 0;
-        const balanceDue = document.getElementById('balanceDue').innerText;
-
-        let savedBills = JSON.parse(localStorage.getItem('savedBills') || '[]');
-        const billObj = { 
-            billNo, date, custName, custPhone, 
-            serialNo, lotNo, shirtType, karigarName,
-            items: currentBillItems, grandTotal, amountPaid, balanceDue 
-        };
-
-        if (editingBillIndex !== null) {
-            savedBills[editingBillIndex] = billObj;
-            editingBillIndex = null;
-            alert("Record & Bill Updated Successfully!");
-        } else {
-            savedBills.push(billObj);
-            let currentNum = parseInt(billNo.replace('JR-', ''));
-            localStorage.setItem('lastBillNo', currentNum);
-            alert("Record & Bill Saved Successfully!");
-        }
-
-        localStorage.setItem('savedBills', JSON.stringify(savedBills));
-        loadHistory();
-        resetForm();
-    }
-
-    function resetForm() {
-        currentBillItems = [];
-        renderTable();
-        document.getElementById('custName').value = '';
-        document.getElementById('custPhone').value = '';
-        document.getElementById('serialNo').value = '';
-        document.getElementById('lotNo').value = '';
-        document.getElementById('karigarName').value = '';
-        document.getElementById('amountPaid').value = '0';
-        document.getElementById('balanceDue').innerText = '0.00';
-        generateBillNumber();
-    }
-
-    function generatePDF() {
-        if (currentBillItems.length === 0) return alert("Please add at least one item!");
-        
-        const custName = document.getElementById('custName').value.trim() || 'Customer';
-        const billNo = document.getElementById('billNo').value || 'Bill';
-        
-        const cleanCustName = custName.replace(/[^a-zA-Z0-9_-]/g, '_');
-        const originalTitle = document.title;
-        
-        document.title = `${cleanCustName}_${billNo}`;
-        window.print();
-        
-        setTimeout(() => {
-            document.title = originalTitle;
-        }, 1000);
-    }
-
-    function exportToExcel() {
-        let savedBills = JSON.parse(localStorage.getItem('savedBills') || '[]');
-        if (savedBills.length === 0) return alert("No records found to export!");
-
-        let csvContent = "data:text/csv;charset=utf-8,";
-        csvContent += "Bill No,Date,Customer Name,Phone,Serial No,Lot No,Shirt Type,Karigar Name,Grand Total,Amount Paid,Balance Due\r\n";
-
-        savedBills.forEach(bill => {
-            let row = [
-                bill.billNo,
-                bill.date,
-                `"${bill.custName}"`,
-                bill.custPhone,
-                bill.serialNo,
-                bill.lotNo,
-                `"${bill.shirtType}"`,
-                `"${bill.karigarName}"`,
-                bill.grandTotal,
-                bill.amountPaid,
-                bill.balanceDue
-            ].join(",");
-            csvContent += row + "\r\n";
-        });
-
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", "Jay_Ranjeet_Production_Records.csv");
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
-
-    function toggleHistory() {
-        const hist = document.getElementById('historySection');
-        hist.style.display = hist.style.display === 'block' ? 'none' : 'block';
-    }
-
-    function loadHistory() {
-        const tbody = document.getElementById('historyBody');
-        tbody.innerHTML = '';
-        let savedBills = JSON.parse(localStorage.getItem('savedBills') || '[]');
-
-        savedBills.forEach((bill, index) => {
-            tbody.innerHTML += `
-                <tr>
-                    <td>${bill.billNo}</td>
-                    <td>${bill.date}</td>
-                    <td>${bill.custName}</td>
-                    <td>${bill.serialNo || '-'} / ${bill.lotNo || '-'}</td>
-                    <td>${bill.shirtType || '-'}</td>
-                    <td>${bill.karigarName || '-'}</td>
-                    <td>₹${bill.grandTotal}</td>
-                    <td>
-                        <button class="btn-sm btn-edit-sm" onclick="editHistoryBill(${index})">✏️ Edit</button>
-                        <button class="btn-sm btn-print-sm" onclick="printHistoryBill(${index})">🖨️</button>
-                        <button class="btn-sm btn-delete-sm" onclick="deleteHistoryBill(${index})">X</button>
-                    </td>
-                </tr>
-            `;
-        });
-    }
-
-    function editHistoryBill(index) {
-        let savedBills = JSON.parse(localStorage.getItem('savedBills') || '[]');
-        let bill = savedBills[index];
-
-        editingBillIndex = index;
-        document.getElementById('billNo').value = bill.billNo;
-        document.getElementById('billDate').value = bill.date;
-        document.getElementById('custName').value = bill.custName;
-        document.getElementById('custPhone').value = bill.custPhone || '';
-        document.getElementById('serialNo').value = bill.serialNo || '';
-        document.getElementById('lotNo').value = bill.lotNo || '';
-        if (bill.shirtType) {
-            document.getElementById('shirtType').value = bill.shirtType;
-        }
-        document.getElementById('karigarName').value = bill.karigarName || '';
-        document.getElementById('amountPaid').value = bill.amountPaid || 0;
-        currentBillItems = bill.items || [];
-        renderTable();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    function printHistoryBill(index) {
-        editHistoryBill(index);
-        setTimeout(() => { generatePDF(); }, 300);
-    }
-
-    function deleteHistoryBill(index) {
-        if (confirm("Are you sure you want to delete this record?")) {
-            let savedBills = JSON.parse(localStorage.getItem('savedBills') || '[]');
-            savedBills.splice(index, 1);
-            localStorage.setItem('savedBills', JSON.stringify(savedBills));
-            loadHistory();
-        }
-    }
-</script>
-</body>
-</html>
+        .btn-save { background-color: #1b7a43; }
+        .btn-print { background-color: var(--primary-navy); }
+        .btn-history { background-color:

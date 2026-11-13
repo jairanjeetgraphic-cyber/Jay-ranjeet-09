@@ -3,20 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jay Ranjeet - Billing & Data Entry App</title>
+    <title>Jay Ranjeet - Billing & Production Data Entry App</title>
     
-    <!-- Browser Tab JR Favicon Icon (Navy & Magenta Theme) -->
-    <link id="dynamicFavicon" rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIwIiBmaWxsPSIjMEIyMjRCIi8+PHRleHQgeD0iNTAlIiB5PSI2NSUiIGZvbnQtc2l6ZT0iNTAiIGZvbnQtd2VpZ2h0PSJib2xkIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZmlsbD0iI0U0MUE2RCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+SlI8L3RleHQ+PC9zdmc+">
+    <!-- Browser Tab JR Favicon Icon (Navy & Pink Theme) -->
+    <link id="dynamicFavicon" rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIwIiBmaWxsPSIjMDcxZTQ4Ii8+PHRleHQgeD0iNTAlIiB5PSI2NSUiIGZvbnQtc2l6ZT0iNTAiIGZvbnQtd2VpZ2h0PSJib2xkIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZmlsbD0iI2U2MWE3MyIgdGV4dC1hbmNob3I9Im1pZGRsZSI+SlI8L3RleHQ+PC9zdmc+">
 
     <style>
         :root {
-            --primary-navy: #0B224B;
-            --dark-navy: #061530;
-            --primary-pink: #E41A6D;
-            --dark-pink: #c2125a;
-            --accent-yellow: #FDB913;
-            --bg-color: #f0f3f8;
-            --text-color: #1e2430;
+            --primary-navy: #071e48;
+            --dark-navy: #04122d;
+            --primary-pink: #e61a73;
+            --dark-pink: #c2125f;
+            --accent-yellow: #f9b208;
+            --light-navy-bg: #f0f4fa;
+            --light-pink-bg: #fdf2f7;
+            --bg-color: #eef2f6;
+            --text-color: #1e293b;
         }
 
         * {
@@ -33,12 +35,12 @@
         }
 
         .container {
-            max-width: 900px;
+            max-width: 920px;
             margin: 0 auto;
             background: #ffffff;
             padding: 20px;
             border-radius: 12px;
-            box-shadow: 0 5px 20px rgba(11, 34, 75, 0.12);
+            box-shadow: 0 6px 20px rgba(7, 30, 72, 0.12);
             border-top: 5px solid var(--primary-navy);
         }
 
@@ -54,7 +56,7 @@
         .header-banner img {
             max-width: 100%;
             height: auto;
-            max-height: 140px;
+            max-height: 130px;
             object-fit: contain;
             display: block;
             margin: 0 auto;
@@ -66,10 +68,10 @@
             font-size: 11px;
             color: var(--primary-navy);
             cursor: pointer;
-            background: #eef2f9;
-            padding: 4px 12px;
+            background: var(--light-navy-bg);
+            padding: 4px 10px;
             border-radius: 4px;
-            border: 1px solid #c5d1e8;
+            border: 1px solid #cbd5e1;
             font-weight: 600;
         }
 
@@ -79,29 +81,26 @@
         }
 
         .fallback-header h1 {
-            font-size: 32px;
+            font-size: 34px;
             font-weight: 900;
             letter-spacing: 1.5px;
-            color: var(--primary-navy);
         }
-
-        .fallback-header h1 span {
-            color: var(--primary-pink);
-        }
+        .fallback-header h1 .jay { color: var(--primary-navy); }
+        .fallback-header h1 .ranjeet { color: var(--primary-pink); }
 
         .fallback-header h3 {
             font-size: 14px;
-            color: #222;
+            color: #111;
             letter-spacing: 3px;
-            margin-top: 3px;
-            font-weight: 700;
+            margin-top: 2px;
+            font-weight: 800;
         }
 
         .fallback-header .tagline-pill {
             display: inline-block;
             background: var(--primary-navy);
-            color: #fff;
-            padding: 5px 18px;
+            color: #ffffff;
+            padding: 4px 16px;
             border-radius: 20px;
             font-size: 12px;
             font-weight: 700;
@@ -110,39 +109,42 @@
             border-bottom: 3px solid var(--accent-yellow);
         }
 
-        /* Navigation Tabs */
+        /* Main Navigation Tabs */
         .nav-tabs {
             display: flex;
             gap: 10px;
             margin-bottom: 20px;
-            background: #eef2f9;
+            background: var(--light-navy-bg);
             padding: 6px;
             border-radius: 8px;
+            border: 1px solid #dbe4f0;
         }
 
-        .tab-btn {
+        .nav-tab {
             flex: 1;
             padding: 12px;
             border: none;
             border-radius: 6px;
             font-size: 15px;
-            font-weight: bold;
+            font-weight: 700;
             cursor: pointer;
             background: transparent;
             color: var(--primary-navy);
-            transition: all 0.25s ease;
+            transition: all 0.2s;
         }
 
-        .tab-btn.active {
+        .nav-tab.active {
             background: var(--primary-navy);
             color: #ffffff;
-            box-shadow: 0 3px 8px rgba(11, 34, 75, 0.25);
+            box-shadow: 0 2px 8px rgba(7, 30, 72, 0.25);
+            border-bottom: 3px solid var(--primary-pink);
         }
 
-        .tab-btn.active.pink-tab {
-            background: var(--primary-pink);
-            color: #ffffff;
-            box-shadow: 0 3px 8px rgba(228, 26, 109, 0.25);
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
         }
 
         /* Form & Grid Styles */
@@ -151,10 +153,10 @@
             grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
             gap: 12px;
             margin-bottom: 20px;
-            background: #f4f7fc;
+            background: var(--light-navy-bg);
             padding: 15px;
             border-radius: 8px;
-            border: 1px solid #d5dfef;
+            border: 1px solid #d5e0f2;
         }
 
         .form-group {
@@ -164,14 +166,14 @@
 
         .form-group label {
             font-size: 12px;
-            font-weight: bold;
+            font-weight: 700;
             color: var(--primary-navy);
             margin-bottom: 5px;
         }
 
         .form-group input, .form-group select {
-            padding: 9px;
-            border: 1px solid #c3cde0;
+            padding: 9px 10px;
+            border: 1px solid #cbd5e1;
             border-radius: 6px;
             font-size: 14px;
             outline: none;
@@ -180,12 +182,12 @@
 
         .form-group input:focus, .form-group select:focus {
             border-color: var(--primary-pink);
-            box-shadow: 0 0 0 2px rgba(228, 26, 109, 0.12);
+            box-shadow: 0 0 0 2px rgba(230, 26, 115, 0.15);
         }
 
         .item-box {
-            background: #fdf6f9;
-            border: 1px solid #f7d2e2;
+            background: #fafafa;
+            border: 1px solid #e2e8f0;
             padding: 15px;
             border-radius: 8px;
             margin-bottom: 20px;
@@ -198,7 +200,7 @@
         }
 
         .btn-add {
-            background-color: var(--primary-pink);
+            background: linear-gradient(90deg, var(--primary-navy), var(--primary-pink));
             color: white;
             border: none;
             padding: 12px;
@@ -208,26 +210,17 @@
             width: 100%;
             margin-top: 15px;
             font-size: 15px;
-            transition: background 0.2s;
+            letter-spacing: 0.5px;
         }
 
         .btn-add:hover {
-            background-color: var(--dark-pink);
+            opacity: 0.92;
         }
 
-        .btn-navy {
-            background-color: var(--primary-navy);
-            color: white;
-        }
-
-        .btn-navy:hover {
-            background-color: var(--dark-navy);
-        }
-
-        /* Item List Manager */
+        /* Item Manager */
         .item-manager-box {
-            background: #eef2f9;
-            border: 1px solid #c5d1e8;
+            background: var(--light-pink-bg);
+            border: 1px solid #f8bbd0;
             padding: 15px;
             border-radius: 8px;
             margin-bottom: 20px;
@@ -235,7 +228,7 @@
         }
 
         .item-manager-box h4 {
-            color: var(--primary-navy);
+            color: var(--primary-pink);
             margin-bottom: 10px;
             font-size: 14px;
         }
@@ -276,16 +269,16 @@
         /* Tables */
         .table-responsive {
             overflow-x: auto;
+            margin-bottom: 20px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
         }
 
         th, td {
-            border: 1px solid #d5dfef;
+            border: 1px solid #cbd5e1;
             padding: 9px;
             text-align: left;
             font-size: 14px;
@@ -294,14 +287,19 @@
         th {
             background-color: var(--primary-navy);
             color: white;
+            border-bottom: 2px solid var(--accent-yellow);
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8fafc;
         }
 
         /* Payment Summary */
         .payment-summary-section {
-            background: #f4f7fc;
+            background: var(--light-navy-bg);
             padding: 15px;
             border-radius: 8px;
-            border: 1px solid #d5dfef;
+            border: 1px solid #d5e0f2;
             margin-bottom: 20px;
         }
 
@@ -318,7 +316,7 @@
             padding: 10px;
             border-radius: 6px;
             background: #ffffff;
-            border: 1px solid #c3cde0;
+            border: 1px solid #cbd5e1;
         }
 
         .summary-box.grand-total {
@@ -338,7 +336,7 @@
             background: #fff;
             padding: 12px;
             border-radius: 8px;
-            border: 1px solid #d5dfef;
+            border: 1px solid #cbd5e1;
             flex-wrap: wrap;
             gap: 15px;
         }
@@ -379,11 +377,11 @@
             color: white;
         }
 
-        .btn-save { background-color: #1b7a43; }
-        .btn-print { background-color: var(--primary-navy); }
-        .btn-history { background-color: #4a5568; }
-        .btn-item-mgr { background-color: var(--primary-pink); }
-        .btn-excel { background-color: #107c41; }
+        .btn-save { background-color: var(--primary-navy); }
+        .btn-print { background-color: var(--primary-pink); }
+        .btn-history { background-color: #334155; }
+        .btn-item-mgr { background-color: #d97706; }
+        .btn-pdf-party { background-color: var(--primary-pink); }
 
         .btn-sm {
             padding: 5px 8px;
@@ -392,29 +390,54 @@
             border-radius: 4px;
             cursor: pointer;
             color: white;
-            margin-right: 2px;
+            margin-right: 3px;
+            font-weight: 600;
         }
-        .btn-edit-sm { background-color: var(--accent-yellow); color: #000; font-weight: bold; }
-        .btn-print-sm { background-color: var(--primary-navy); }
+        .btn-edit-sm { background-color: var(--primary-navy); }
+        .btn-print-sm { background-color: #0284c7; }
         .btn-delete-sm { background-color: var(--primary-pink); }
 
         .history-section {
             display: none;
-            margin-top: 30px;
-            border-top: 2px dashed #c3cde0;
+            margin-top: 25px;
+            border-top: 2px dashed #cbd5e1;
             padding-top: 20px;
         }
 
-        /* Data Entry Section Specific Styles */
-        .sticky-badge {
-            display: inline-block;
-            background: var(--accent-yellow);
+        /* Data Entry & Party Folder Specific Styles */
+        .party-folder-bar {
+            background: var(--light-pink-bg);
+            border: 1px solid #f8bbd0;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .party-folder-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .party-folder-header h3 {
             color: var(--primary-navy);
-            font-size: 10px;
-            padding: 2px 6px;
-            border-radius: 4px;
-            margin-left: 5px;
-            font-weight: 800;
+            font-size: 16px;
+        }
+
+        .party-controls {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 10px;
+            align-items: end;
+        }
+
+        .new-party-box {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
         }
 
         .shirt-toggle-group {
@@ -422,78 +445,67 @@
             gap: 8px;
         }
 
-        .shirt-option-btn {
+        .shirt-option {
             flex: 1;
             padding: 9px;
-            border: 2px solid #c3cde0;
-            background: #fff;
-            color: var(--primary-navy);
-            font-weight: bold;
-            border-radius: 6px;
-            cursor: pointer;
             text-align: center;
-            transition: all 0.2s;
+            border: 2px solid #cbd5e1;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            background: #fff;
+            color: #475569;
+            transition: 0.2s;
         }
 
-        .shirt-option-btn.selected {
-            background: var(--primary-navy);
-            color: #fff;
-            border-color: var(--primary-navy);
-        }
-
-        .shirt-option-btn.selected.pink-sel {
+        .shirt-option.selected {
             background: var(--primary-pink);
+            color: #fff;
             border-color: var(--primary-pink);
         }
 
-        .data-stats-bar {
+        .badge-shirt {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .badge-half { background: #fef3c7; color: #b45309; border: 1px solid #f59e0b; }
+        .badge-full { background: #dbeafe; color: #1e40af; border: 1px solid #3b82f6; }
+
+        .folder-stats {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
             background: var(--primary-navy);
             color: white;
-            padding: 12px 16px;
-            border-radius: 8px;
+            padding: 10px 15px;
+            border-radius: 6px;
             margin-bottom: 15px;
-            flex-wrap: wrap;
-            gap: 10px;
-            border-bottom: 3px solid var(--accent-yellow);
+            font-size: 13px;
+            border-left: 5px solid var(--accent-yellow);
         }
 
-        .badge-half {
-            background: #eef2f9;
-            color: var(--primary-navy);
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-weight: bold;
-            font-size: 12px;
-            border: 1px solid var(--primary-navy);
-        }
-
-        .badge-full {
-            background: #fdf0f6;
-            color: var(--primary-pink);
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-weight: bold;
-            font-size: 12px;
-            border: 1px solid var(--primary-pink);
-        }
-
-        /* Footer */
         .footer-credits {
             margin-top: 30px;
             padding-top: 15px;
-            border-top: 2px solid #eef2f9;
+            border-top: 1px solid #e2e8f0;
             text-align: center;
             font-size: 13px;
-            color: #555;
+            color: #475569;
             font-weight: 600;
         }
 
         .footer-credits span {
             color: var(--primary-pink);
             font-weight: bold;
+        }
+
+        /* Dedicated Hidden Container for All-Parties PDF Print */
+        #allPartiesPrintArea {
+            display: none;
         }
 
         @page {
@@ -504,11 +516,21 @@
         @media print {
             body { background: white; padding: 0; }
             .container { box-shadow: none; border: none; width: 100%; max-width: 100%; padding: 0; }
-            .nav-tabs, .item-box, .btn-add, .action-btns, .history-section, .delete-col, .logo-upload-btn, .item-manager-box, .upi-input-group { display: none !important; }
+            .nav-tabs, .item-box, .btn-add, .action-btns, .history-section, .delete-col, .logo-upload-btn, .item-manager-box, .upi-input-group, .party-folder-bar, .no-print { display: none !important; }
             input, select { border: none !important; background: transparent !important; -webkit-appearance: none; }
-            th { background-color: #0B224B !important; color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            th { background-color: #071e48 !important; color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .folder-stats { background-color: #071e48 !important; color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .payment-summary-section { border: 1px solid #ccc; }
             .footer-credits { border-top: 1px solid #ccc; font-size: 12px; }
+
+            /* When printing All Parties PDF */
+            body.printing-all-parties #billingTab,
+            body.printing-all-parties #dataEntryTab {
+                display: none !important;
+            }
+            body.printing-all-parties #allPartiesPrintArea {
+                display: block !important;
+            }
         }
     </style>
 </head>
@@ -516,30 +538,30 @@
 <div class="container">
     <!-- Header Banner -->
     <div class="header-banner">
-        <img id="bannerImg" src="logo.png" alt="Jay Ranjeet Graphic Design & Non Woven Carry Bag Printing" onerror="showFallbackHeader()">
+        <img id="bannerImg" src="logo.png" alt="Jay Ranjeet Graphic Design" onerror="showFallbackHeader()">
         
         <div class="fallback-header" id="fallbackHeader">
-            <h1>JAY <span>RANJEET</span></h1>
+            <h1><span class="jay">JAY</span> <span class="ranjeet">RANJEET</span></h1>
             <h3>GRAPHIC DESIGN</h3>
             <div class="tagline-pill">NON WOVEN CARRY BAG PRINTING</div>
         </div>
 
         <label class="logo-upload-btn">
-            🖼️ Change/Upload Visiting Card Header
+            🖼️ Change/Upload Visiting Card / Logo
             <input type="file" id="logoInput" accept="image/*" style="display:none;" onchange="uploadLogo(event)">
         </label>
     </div>
 
-    <!-- Navigation Switch Tabs -->
+    <!-- Main Navigation Tabs -->
     <div class="nav-tabs">
-        <button class="tab-btn active" id="tabBtnBilling" onclick="switchTab('billing')">🧾 Billing & Invoice</button>
-        <button class="tab-btn" id="tabBtnDataEntry" onclick="switchTab('dataEntry')">📊 Karigar Data Entry (Excel)</button>
+        <button class="nav-tab active" id="tabBtnBilling" onclick="switchMainTab('billing')">🧾 Billing & Invoice</button>
+        <button class="nav-tab" id="tabBtnDataEntry" onclick="switchMainTab('dataEntry')">📋 Data Entry (Party Folder & PDF)</button>
     </div>
 
     <!-- ========================================== -->
-    <!-- TAB 1: BILLING SECTION                     -->
+    <!-- TAB 1: BILLING APP                         -->
     <!-- ========================================== -->
-    <div id="billingSection">
+    <div id="billingTab" class="tab-content active">
         <!-- Bill Metadata -->
         <div class="meta-grid">
             <div class="form-group">
@@ -564,7 +586,7 @@
         <div class="item-manager-box" id="itemManagerBox">
             <h4>➕ Manage Options List</h4>
             <div class="item-manager-grid">
-                <input type="text" id="newMasterItem" placeholder="New item name (e.g. D Cut Bag, Box Bag)" style="flex:1; padding:8px; border:1px solid #c3cde0; border-radius:4px;">
+                <input type="text" id="newMasterItem" placeholder="New item name (e.g. D Cut Bag, Box Bag)" style="flex:1; padding:8px; border:1px solid #ccc; border-radius:4px;">
                 <button onclick="addMasterItem()" style="background:var(--primary-navy); color:white; border:none; padding:8px 15px; border-radius:4px; font-weight:bold; cursor:pointer;">Save Option</button>
             </div>
             <p style="font-size:12px; color:#555;">Saved Options:</p>
@@ -587,7 +609,7 @@
                     <input type="text" id="itemSize" placeholder="e.g. 10x12">
                 </div>
                 <div class="form-group">
-                    <label>Quantity / Kg</label>
+                    <label>Quantity / Sq.Ft</label>
                     <input type="text" id="itemQty" inputmode="decimal" placeholder="Qty" value="1" oninput="calculateItemTotal()">
                 </div>
                 <div class="form-group">
@@ -626,8 +648,8 @@
                     Grand Total: ₹ <span id="grandTotal">0.00</span>
                 </div>
                 <div class="form-group">
-                    <label style="font-weight:bold; color:#1b7a43;">Amount Paid (₹)</label>
-                    <input type="number" id="amountPaid" placeholder="0.00" value="0" oninput="calculateBalance()" style="padding: 10px; font-weight: bold; border-color: #1b7a43;">
+                    <label style="font-weight:bold; color:#15803d;">Amount Paid (₹)</label>
+                    <input type="number" id="amountPaid" placeholder="0.00" value="0" oninput="calculateBalance()" style="padding: 10px; font-weight: bold; border-color: #15803d;">
                 </div>
                 <div class="summary-box balance-due">
                     Balance Due: ₹ <span id="balanceDue">0.00</span>
@@ -637,7 +659,7 @@
             <div class="qr-container">
                 <div class="upi-input-group">
                     <label style="font-size: 11px; font-weight: bold; display: block; color: var(--primary-navy);">Set UPI ID:</label>
-                    <input type="text" id="upiId" placeholder="e.g. 9876543210@upi" onchange="saveUpiId()" style="font-size: 12px; padding: 6px; border: 1px solid #c3cde0; border-radius: 4px; width: 160px;">
+                    <input type="text" id="upiId" placeholder="e.g. 9876543210@upi" onchange="saveUpiId()" style="font-size: 12px; padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px; width: 160px;">
                 </div>
                 <div class="qr-box" id="qrBox">
                     <img id="qrCodeImg" src="" alt="Payment QR Code">
@@ -650,7 +672,7 @@
         <div class="action-btns">
             <button class="btn btn-save" onclick="saveBill()">💾 Save Bill</button>
             <button class="btn btn-print" onclick="generatePDF()">📄 Save PDF / Print</button>
-            <button class="btn btn-item-mgr" onclick="toggleItemManager()">⚙️ Manage Items</button>
+            <button class="btn btn-item-mgr" onclick="toggleItemManager()">⚙️ Options Manage</button>
             <button class="btn btn-history" onclick="toggleHistory()">📜 Old Bills Record</button>
         </div>
 
@@ -678,82 +700,96 @@
     </div>
 
     <!-- ========================================== -->
-    <!-- TAB 2: DATA ENTRY & EXCEL EXPORT SECTION   -->
+    <!-- TAB 2: DATA ENTRY (PARTY FOLDER & PDF)     -->
     <!-- ========================================== -->
-    <div id="dataEntrySection" style="display: none;">
-        <div class="data-stats-bar">
-            <div>
-                <span style="font-size: 13px; opacity: 0.9;">Total Entries:</span>
-                <strong id="totalEntriesCount" style="font-size: 18px; color: var(--accent-yellow); margin-left: 5px;">0</strong>
+    <div id="dataEntryTab" class="tab-content">
+        <!-- Party Folder Selection / Creation -->
+        <div class="party-folder-bar">
+            <div class="party-folder-header">
+                <h3>📁 Party Folder Selection</h3>
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                    <button class="btn-sm btn-pdf-party" style="padding:8px 14px; font-size:13px;" onclick="saveCurrentPartyPDF()">📄 Save Party PDF / Print</button>
+                    <button class="btn-sm btn-edit-sm" style="padding:8px 14px; font-size:13px;" onclick="saveAllPartiesPDF()">📑 Save All Parties PDF</button>
+                </div>
             </div>
-            <div>
-                <span style="font-size: 13px; opacity: 0.9;">Total Quantity:</span>
-                <strong id="totalDataQty" style="font-size: 18px; color: var(--accent-yellow); margin-left: 5px;">0</strong>
+
+            <div class="party-controls">
+                <div class="form-group">
+                    <label>Select Active Party Folder</label>
+                    <select id="partyFolderSelect" onchange="onPartyChange()"></select>
+                </div>
+                <button class="btn-sm btn-delete-sm" style="padding:10px 12px;" onclick="deleteCurrentPartyFolder()" title="Delete Selected Party Folder">🗑️ Delete Folder</button>
             </div>
-            <button class="btn btn-excel" style="flex: none; padding: 8px 16px;" onclick="exportDataToExcel()">📥 Download Excel Sheet</button>
+
+            <div class="new-party-box">
+                <input type="text" id="newPartyNameInput" placeholder="Nayi Party ka naam likhein (New Party Folder)..." style="flex:1; padding:8px 10px; border:1px solid #cbd5e1; border-radius:6px; font-size:13px;">
+                <button onclick="createNewPartyFolder()" style="background:var(--primary-pink); color:white; border:none; padding:8px 16px; border-radius:6px; font-weight:bold; cursor:pointer; font-size:13px;">+ Create Party Folder</button>
+            </div>
         </div>
 
-        <div class="item-box" style="background: #f4f7fc; border-color: #c5d1e8;">
-            <div class="meta-grid" style="background: transparent; border: none; padding: 0; margin-bottom: 12px;">
-                <div class="form-group">
-                    <label>Entry Date</label>
-                    <input type="date" id="deDate">
-                </div>
-                <div class="form-group">
-                    <label>Lot Number *</label>
-                    <input type="text" id="deLotNo" placeholder="e.g. LOT-101">
-                </div>
-                <div class="form-group">
-                    <label>Quantity *</label>
-                    <input type="number" id="deQty" inputmode="decimal" placeholder="Enter Qty">
-                </div>
-            </div>
+        <!-- Folder Summary Bar (Visible in PDF too) -->
+        <div class="folder-stats">
+            <div>📂 Party Name: <strong id="activeFolderNameLabel" style="color:var(--accent-yellow);">General</strong></div>
+            <div>📦 Total Entries: <strong id="folderTotalEntries">0</strong></div>
+            <div>🔢 Total Quantity: <strong id="folderTotalQty">0</strong></div>
+            <div>📅 Report Date: <strong id="folderReportDate"></strong></div>
+        </div>
 
-            <div class="meta-grid" style="background: transparent; border: none; padding: 0; margin-bottom: 0;">
-                <!-- Sticky Shirt Half / Full Selector -->
+        <!-- Data Entry Input Box -->
+        <div class="item-box" style="border-left: 4px solid var(--primary-pink);">
+            <h4 id="entryFormTitle" style="color:var(--primary-navy); margin-bottom:12px; font-size:15px;">➕ New Production / Lot Entry</h4>
+            <div class="item-grid">
                 <div class="form-group">
-                    <label>Shirt Type <span class="sticky-badge">AUTO-SAVED SELECTION</span></label>
+                    <label>Date</label>
+                    <input type="text" id="entryDate">
+                </div>
+                <div class="form-group">
+                    <label>Lot Number (Auto +1)</label>
+                    <input type="number" id="entryLotNo" placeholder="e.g. 101">
+                </div>
+                <div class="form-group">
+                    <label>Quantity</label>
+                    <input type="number" id="entryQty" placeholder="Enter Qty">
+                </div>
+                <div class="form-group">
+                    <label>Shirt Type (Auto-Remembers)</label>
                     <div class="shirt-toggle-group">
-                        <button type="button" class="shirt-option-btn selected" id="btnShirtHalf" onclick="setShirtType('Half')">👕 Half</button>
-                        <button type="button" class="shirt-option-btn" id="btnShirtFull" onclick="setShirtType('Full')">👔 Full</button>
+                        <div class="shirt-option selected" id="optHalf" onclick="selectShirtType('Half')">Half</div>
+                        <div class="shirt-option" id="optFull" onclick="selectShirtType('Full')">Full</div>
                     </div>
                 </div>
-
-                <!-- Karigar Name with Quick Select Datalist -->
                 <div class="form-group">
-                    <label>Karigar Name *</label>
-                    <input type="text" id="deKarigar" list="karigarSuggestions" placeholder="Enter or Select Karigar Name">
+                    <label>Karigar Name</label>
+                    <input type="text" id="entryKarigar" list="karigarSuggestions" placeholder="Karigar Name">
                     <datalist id="karigarSuggestions"></datalist>
                 </div>
             </div>
-
-            <button class="btn-add" id="deSubmitBtn" onclick="saveDataEntry()">➕ Add Data Entry</button>
+            <div style="display:flex; gap:10px; margin-top:15px;">
+                <button class="btn-add" id="saveEntryBtn" style="margin-top:0;" onclick="saveDataEntry()">💾 Save Entry to Party Folder</button>
+                <button class="btn" id="cancelEditEntryBtn" style="display:none; background:#64748b; max-width:140px;" onclick="cancelEntryEdit()">Cancel</button>
+            </div>
         </div>
 
-        <!-- Filter & Clear Controls -->
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 10px;">
-            <input type="text" id="deSearchInput" onkeyup="renderDataEntryTable()" placeholder="🔍 Search Lot No, Karigar, or Half/Full..." style="padding: 8px 12px; border: 1px solid #c3cde0; border-radius: 6px; width: 260px; font-size: 13px;">
-            <button onclick="clearAllDataEntries()" style="background: #fff; color: var(--primary-pink); border: 1px solid var(--primary-pink); padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer;">🗑️ Clear All Records</button>
-        </div>
-
-        <!-- Data Entry Table -->
+        <!-- Party Entries Table -->
         <div class="table-responsive">
             <table>
                 <thead>
                     <tr>
-                        <th>S.No</th>
                         <th>Date</th>
-                        <th>Lot Number</th>
+                        <th>Lot No.</th>
                         <th>Quantity</th>
                         <th>Shirt Type</th>
                         <th>Karigar Name</th>
-                        <th>Action</th>
+                        <th class="delete-col">Action</th>
                     </tr>
                 </thead>
-                <tbody id="dataEntryBody"></tbody>
+                <tbody id="partyEntriesBody"></tbody>
             </table>
         </div>
     </div>
+
+    <!-- Hidden Section Used Only When Printing All Parties Together -->
+    <div id="allPartiesPrintArea"></div>
 
     <!-- Footer Credits -->
     <div class="footer-credits">
@@ -763,15 +799,19 @@
 
 <script>
     // ==========================================
-    // INITIALIZATION & THEME SETUP
+    // GLOBAL & BILLING VARIABLES
     // ==========================================
     let currentBillItems = [];
     let editingBillIndex = null;
-    const defaultMasterItems = ["D cut bag", "Box bag", "Star flex", "Visiting Card", "Vinyl Print", "Glow Sign Board", "Bill Book", "Letter Head"];
+    const defaultMasterItems = ["D cut bag", "Box bag", "W cut bag", "Loop Handle Bag", "Star flex", "Visiting Card", "Vinyl Print", "Bill Book"];
 
-    // Data Entry State
-    let editingDataIndex = null;
-    let selectedShirtType = localStorage.getItem('stickyShirtType') || 'Half';
+    // ==========================================
+    // DATA ENTRY & PARTY FOLDER VARIABLES
+    // ==========================================
+    let partyFolders = {}; // { "Party Name": [ { id, date, lotNo, qty, shirtType, karigar } ] }
+    let activeParty = "General";
+    let selectedShirtType = "Half"; // Sticky state: remains what user selects
+    let editingEntryId = null;
 
     window.onload = function() {
         forceFaviconJR();
@@ -783,27 +823,23 @@
         loadHistory();
         updateQRCode();
 
-        // Init Data Entry Tab
-        initDataEntry();
+        // Initialize Data Entry Tab
+        initDataEntrySystem();
     };
 
-    function switchTab(tabName) {
-        const billingSec = document.getElementById('billingSection');
-        const dataSec = document.getElementById('dataEntrySection');
-        const btnBill = document.getElementById('tabBtnBilling');
-        const btnData = document.getElementById('tabBtnDataEntry');
+    function switchMainTab(tab) {
+        document.getElementById('billingTab').classList.remove('active');
+        document.getElementById('dataEntryTab').classList.remove('active');
+        document.getElementById('tabBtnBilling').classList.remove('active');
+        document.getElementById('tabBtnDataEntry').classList.remove('active');
 
-        if (tabName === 'billing') {
-            billingSec.style.display = 'block';
-            dataSec.style.display = 'none';
-            btnBill.classList.add('active');
-            btnData.classList.remove('active', 'pink-tab');
+        if (tab === 'billing') {
+            document.getElementById('billingTab').classList.add('active');
+            document.getElementById('tabBtnBilling').classList.add('active');
         } else {
-            billingSec.style.display = 'none';
-            dataSec.style.display = 'block';
-            btnData.classList.add('active', 'pink-tab');
-            btnBill.classList.remove('active');
-            renderDataEntryTable();
+            document.getElementById('dataEntryTab').classList.add('active');
+            document.getElementById('tabBtnDataEntry').classList.add('active');
+            renderPartyEntries();
         }
     }
 
@@ -814,12 +850,12 @@
             canvas.height = 64;
             const ctx = canvas.getContext('2d');
 
-            ctx.fillStyle = '#0B224B';
+            ctx.fillStyle = '#071e48';
             ctx.beginPath();
             ctx.roundRect(0, 0, 64, 64, 12);
             ctx.fill();
 
-            ctx.fillStyle = '#E41A6D';
+            ctx.fillStyle = '#e61a73';
             ctx.font = 'bold 32px sans-serif';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
@@ -867,18 +903,24 @@
         document.getElementById('fallbackHeader').style.display = 'block';
     }
 
-    // ==========================================
-    // BILLING FUNCTIONS
-    // ==========================================
-    function setCurrentDate() {
+    function getTodayFormatted() {
         const today = new Date();
         const dd = String(today.getDate()).padStart(2, '0');
         const mm = String(today.getMonth() + 1).padStart(2, '0');
         const yyyy = today.getFullYear();
-        document.getElementById('billDate').value = `${dd}/${mm}/${yyyy}`;
-        document.getElementById('deDate').value = `${yyyy}-${mm}-${dd}`;
+        return `${dd}/${mm}/${yyyy}`;
     }
 
+    function setCurrentDate() {
+        const formatted = getTodayFormatted();
+        document.getElementById('billDate').value = formatted;
+        document.getElementById('entryDate').value = formatted;
+        document.getElementById('folderReportDate').innerText = formatted;
+    }
+
+    // ==========================================
+    // BILLING LOGIC
+    // ==========================================
     function generateBillNumber() {
         let lastNo = localStorage.getItem('lastBillNo') || 1000;
         let nextNo = parseInt(lastNo) + 1;
@@ -1157,188 +1199,350 @@
     }
 
     // ==========================================
-    // DATA ENTRY & EXCEL EXPORT FUNCTIONS
+    // DATA ENTRY & PARTY FOLDER SYSTEM LOGIC
     // ==========================================
-    function initDataEntry() {
-        setShirtType(selectedShirtType, false);
-        updateKarigarDatalist();
-        renderDataEntryTable();
-    }
-
-    // Sticky Shirt Half / Full Option (Remembers choice until changed)
-    function setShirtType(type, saveToStorage = true) {
-        selectedShirtType = type;
-        if (saveToStorage) {
-            localStorage.setItem('stickyShirtType', type);
+    function initDataEntrySystem() {
+        const storedFolders = localStorage.getItem('jr_party_folders');
+        if (storedFolders) {
+            partyFolders = JSON.parse(storedFolders);
+        }
+        if (Object.keys(partyFolders).length === 0) {
+            partyFolders["General"] = [];
+            savePartyFoldersToStorage();
         }
 
-        const btnHalf = document.getElementById('btnShirtHalf');
-        const btnFull = document.getElementById('btnShirtFull');
+        const savedActiveParty = localStorage.getItem('jr_active_party');
+        if (savedActiveParty && partyFolders[savedActiveParty]) {
+            activeParty = savedActiveParty;
+        } else {
+            activeParty = Object.keys(partyFolders)[0];
+        }
+
+        // Restore sticky Shirt Type (Half or Full)
+        const savedShirt = localStorage.getItem('jr_sticky_shirt_type') || 'Half';
+        selectShirtType(savedShirt, false);
+
+        populatePartyDropdown();
+        renderPartyEntries();
+        updateNextLotNumber();
+        updateKarigarSuggestions();
+    }
+
+    function savePartyFoldersToStorage() {
+        localStorage.setItem('jr_party_folders', JSON.stringify(partyFolders));
+    }
+
+    function populatePartyDropdown() {
+        const select = document.getElementById('partyFolderSelect');
+        select.innerHTML = '';
+        Object.keys(partyFolders).forEach(partyName => {
+            const count = partyFolders[partyName].length;
+            const selected = partyName === activeParty ? 'selected' : '';
+            select.innerHTML += `<option value="${partyName}" ${selected}>📁 ${partyName} (${count} entries)</option>`;
+        });
+        document.getElementById('activeFolderNameLabel').innerText = activeParty;
+    }
+
+    function createNewPartyFolder() {
+        const input = document.getElementById('newPartyNameInput');
+        const name = input.value.trim();
+        if (!name) return alert("Kripya Party ka naam likhein!");
+
+        if (partyFolders[name]) {
+            alert("Yeh Party Folder pehle se bana hua hai! Use select kar diya gaya hai.");
+        } else {
+            partyFolders[name] = [];
+            savePartyFoldersToStorage();
+        }
+
+        activeParty = name;
+        localStorage.setItem('jr_active_party', activeParty);
+        input.value = '';
+        cancelEntryEdit();
+        populatePartyDropdown();
+        renderPartyEntries();
+        updateNextLotNumber();
+    }
+
+    function onPartyChange() {
+        activeParty = document.getElementById('partyFolderSelect').value;
+        localStorage.setItem('jr_active_party', activeParty);
+        document.getElementById('activeFolderNameLabel').innerText = activeParty;
+        cancelEntryEdit();
+        renderPartyEntries();
+        updateNextLotNumber();
+    }
+
+    function deleteCurrentPartyFolder() {
+        const folderNames = Object.keys(partyFolders);
+        if (folderNames.length <= 1) {
+            return alert("Kam se kam ek Party Folder hona zaroori hai.");
+        }
+        if (confirm(`Kya aap "${activeParty}" folder aur uska saara data delete karna chahte hain?`)) {
+            delete partyFolders[activeParty];
+            savePartyFoldersToStorage();
+            activeParty = Object.keys(partyFolders)[0];
+            localStorage.setItem('jr_active_party', activeParty);
+            populatePartyDropdown();
+            renderPartyEntries();
+            updateNextLotNumber();
+        }
+    }
+
+    // Sticky Half / Full Shirt Selection
+    function selectShirtType(type, savePref = true) {
+        selectedShirtType = type;
+        document.getElementById('optHalf').classList.remove('selected');
+        document.getElementById('optFull').classList.remove('selected');
 
         if (type === 'Half') {
-            btnHalf.classList.add('selected');
-            btnFull.classList.remove('selected', 'pink-sel');
+            document.getElementById('optHalf').classList.add('selected');
         } else {
-            btnFull.classList.add('selected', 'pink-sel');
-            btnHalf.classList.remove('selected');
+            document.getElementById('optFull').classList.add('selected');
+        }
+
+        if (savePref) {
+            localStorage.setItem('jr_sticky_shirt_type', type);
         }
     }
 
-    function updateKarigarDatalist() {
-        const entries = JSON.parse(localStorage.getItem('karigarDataEntries') || '[]');
-        const datalist = document.getElementById('karigarSuggestions');
-        const uniqueKarigars = [...new Set(entries.map(e => e.karigarName.trim()).filter(Boolean))];
-        
-        datalist.innerHTML = '';
-        uniqueKarigars.forEach(name => {
-            datalist.innerHTML += `<option value="${name}">`;
+    // Automatic +1 Lot Number Calculation
+    function updateNextLotNumber() {
+        if (editingEntryId !== null) return;
+
+        const entries = partyFolders[activeParty] || [];
+        let maxLot = 0;
+
+        entries.forEach(item => {
+            const num = parseInt(item.lotNo);
+            if (!isNaN(num) && num > maxLot) {
+                maxLot = num;
+            }
         });
+
+        const nextLot = maxLot > 0 ? maxLot + 1 : 1;
+        document.getElementById('entryLotNo').value = nextLot;
     }
 
     function saveDataEntry() {
-        const dateVal = document.getElementById('deDate').value;
-        const lotNo = document.getElementById('deLotNo').value.trim();
-        const qty = document.getElementById('deQty').value.trim();
-        const karigarName = document.getElementById('deKarigar').value.trim();
-        const shirtType = selectedShirtType;
+        const date = document.getElementById('entryDate').value.trim() || getTodayFormatted();
+        const lotNo = document.getElementById('entryLotNo').value.trim();
+        const qty = document.getElementById('entryQty').value.trim();
+        const karigar = document.getElementById('entryKarigar').value.trim();
 
-        if (!lotNo) return alert("Please enter Lot Number!");
-        if (!qty || parseFloat(qty) <= 0) return alert("Please enter valid Quantity!");
-        if (!karigarName) return alert("Please enter Karigar Name!");
+        if (!lotNo) return alert("Lot Number daalna zaroori hai!");
+        if (!qty || parseFloat(qty) <= 0) return alert("Sahi Quantity daalein!");
+        if (!karigar) return alert("Karigar ka naam daalein!");
 
-        let entries = JSON.parse(localStorage.getItem('karigarDataEntries') || '[]');
-        const entryObj = {
-            date: dateVal,
-            lotNo: lotNo,
-            qty: parseFloat(qty),
-            shirtType: shirtType,
-            karigarName: karigarName
-        };
-
-        if (editingDataIndex !== null) {
-            entries[editingDataIndex] = entryObj;
-            editingDataIndex = null;
-            document.getElementById('deSubmitBtn').innerText = "➕ Add Data Entry";
-            document.getElementById('deSubmitBtn').style.backgroundColor = "var(--primary-pink)";
-        } else {
-            entries.unshift(entryObj); // Latest entry on top
+        if (!partyFolders[activeParty]) {
+            partyFolders[activeParty] = [];
         }
 
-        localStorage.setItem('karigarDataEntries', JSON.stringify(entries));
-        
-        // Clear Lot No and Qty for fast next entry, KEEP Shirt Type & Karigar ready
-        document.getElementById('deLotNo').value = '';
-        document.getElementById('deQty').value = '';
-        document.getElementById('deLotNo').focus();
+        if (editingEntryId !== null) {
+            const idx = partyFolders[activeParty].findIndex(e => e.id === editingEntryId);
+            if (idx !== -1) {
+                partyFolders[activeParty][idx] = {
+                    id: editingEntryId,
+                    date,
+                    lotNo: parseInt(lotNo) || lotNo,
+                    qty: parseFloat(qty),
+                    shirtType: selectedShirtType,
+                    karigar
+                };
+            }
+            editingEntryId = null;
+            document.getElementById('entryFormTitle').innerText = "➕ New Production / Lot Entry";
+            document.getElementById('saveEntryBtn').innerText = "💾 Save Entry to Party Folder";
+            document.getElementById('cancelEditEntryBtn').style.display = "none";
+        } else {
+            partyFolders[activeParty].push({
+                id: Date.now(),
+                date,
+                lotNo: parseInt(lotNo) || lotNo,
+                qty: parseFloat(qty),
+                shirtType: selectedShirtType,
+                karigar
+            });
+        }
 
-        updateKarigarDatalist();
-        renderDataEntryTable();
+        savePartyFoldersToStorage();
+        populatePartyDropdown();
+        renderPartyEntries();
+        updateKarigarSuggestions();
+
+        document.getElementById('entryQty').value = '';
+        updateNextLotNumber();
+        document.getElementById('entryQty').focus();
     }
 
-    function renderDataEntryTable() {
-        const tbody = document.getElementById('dataEntryBody');
-        const searchQuery = (document.getElementById('deSearchInput').value || '').toLowerCase();
-        const entries = JSON.parse(localStorage.getItem('karigarDataEntries') || '[]');
-
+    function renderPartyEntries() {
+        const tbody = document.getElementById('partyEntriesBody');
         tbody.innerHTML = '';
+
+        const entries = partyFolders[activeParty] || [];
         let totalQty = 0;
-        let visibleCount = 0;
 
-        entries.forEach((item, index) => {
-            const matchText = `${item.lotNo} ${item.karigarName} ${item.shirtType} ${item.date}`.toLowerCase();
-            if (searchQuery && !matchText.includes(searchQuery)) return;
-
-            visibleCount++;
-            totalQty += parseFloat(item.qty) || 0;
-
-            const badgeClass = item.shirtType === 'Half' ? 'badge-half' : 'badge-full';
-            const formattedDate = item.date ? item.date.split('-').reverse().join('/') : '-';
+        entries.forEach(entry => {
+            totalQty += parseFloat(entry.qty) || 0;
+            const badgeClass = entry.shirtType === 'Half' ? 'badge-half' : 'badge-full';
 
             tbody.innerHTML += `
                 <tr>
-                    <td>${visibleCount}</td>
-                    <td>${formattedDate}</td>
-                    <td><strong>${item.lotNo}</strong></td>
-                    <td><strong>${item.qty}</strong></td>
-                    <td><span class="${badgeClass}">${item.shirtType}</span></td>
-                    <td>${item.karigarName}</td>
-                    <td>
-                        <button class="btn-sm btn-edit-sm" onclick="editDataEntry(${index})">✏️ Edit</button>
-                        <button class="btn-sm btn-delete-sm" onclick="deleteDataEntry(${index})">X</button>
+                    <td>${entry.date}</td>
+                    <td><strong>#${entry.lotNo}</strong></td>
+                    <td><strong>${entry.qty}</strong></td>
+                    <td><span class="badge-shirt ${badgeClass}">${entry.shirtType}</span></td>
+                    <td>${entry.karigar}</td>
+                    <td class="delete-col">
+                        <button class="btn-sm btn-edit-sm" onclick="editDataEntry(${entry.id})">✏️ Edit</button>
+                        <button class="btn-sm btn-delete-sm" onclick="deleteDataEntry(${entry.id})">X</button>
                     </td>
                 </tr>
             `;
         });
 
-        document.getElementById('totalEntriesCount').innerText = visibleCount;
-        document.getElementById('totalDataQty').innerText = totalQty;
+        document.getElementById('folderTotalEntries').innerText = entries.length;
+        document.getElementById('folderTotalQty').innerText = totalQty;
     }
 
-    function editDataEntry(index) {
-        const entries = JSON.parse(localStorage.getItem('karigarDataEntries') || '[]');
-        const item = entries[index];
+    function editDataEntry(id) {
+        const entries = partyFolders[activeParty] || [];
+        const entry = entries.find(e => e.id === id);
+        if (!entry) return;
 
-        editingDataIndex = index;
-        document.getElementById('deDate').value = item.date;
-        document.getElementById('deLotNo').value = item.lotNo;
-        document.getElementById('deQty').value = item.qty;
-        document.getElementById('deKarigar').value = item.karigarName;
-        setShirtType(item.shirtType, true);
+        editingEntryId = id;
+        document.getElementById('entryDate').value = entry.date;
+        document.getElementById('entryLotNo').value = entry.lotNo;
+        document.getElementById('entryQty').value = entry.qty;
+        document.getElementById('entryKarigar').value = entry.karigar;
+        selectShirtType(entry.shirtType, false);
 
-        const btn = document.getElementById('deSubmitBtn');
-        btn.innerText = "💾 Update Data Entry";
-        btn.style.backgroundColor = "#1b7a43";
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        document.getElementById('entryFormTitle').innerText = `✏️ Editing Lot #${entry.lotNo} (${activeParty})`;
+        document.getElementById('saveEntryBtn').innerText = "✅ Update Entry";
+        document.getElementById('cancelEditEntryBtn').style.display = "inline-block";
+        window.scrollTo({ top: 150, behavior: 'smooth' });
     }
 
-    function deleteDataEntry(index) {
-        if (confirm("Delete this entry?")) {
-            let entries = JSON.parse(localStorage.getItem('karigarDataEntries') || '[]');
-            entries.splice(index, 1);
-            localStorage.setItem('karigarDataEntries', JSON.stringify(entries));
-            renderDataEntryTable();
+    function cancelEntryEdit() {
+        editingEntryId = null;
+        document.getElementById('entryDate').value = getTodayFormatted();
+        document.getElementById('entryQty').value = '';
+        document.getElementById('entryFormTitle').innerText = "➕ New Production / Lot Entry";
+        document.getElementById('saveEntryBtn').innerText = "💾 Save Entry to Party Folder";
+        document.getElementById('cancelEditEntryBtn').style.display = "none";
+
+        const savedShirt = localStorage.getItem('jr_sticky_shirt_type') || 'Half';
+        selectShirtType(savedShirt, false);
+        updateNextLotNumber();
+    }
+
+    function deleteDataEntry(id) {
+        if (confirm("Kya aap is entry ko delete karna chahte hain?")) {
+            partyFolders[activeParty] = partyFolders[activeParty].filter(e => e.id !== id);
+            savePartyFoldersToStorage();
+            populatePartyDropdown();
+            renderPartyEntries();
+            updateNextLotNumber();
         }
     }
 
-    function clearAllDataEntries() {
-        if (confirm("⚠️ Kya aap saari Data Entries delete karna chahte hain? Pehle Excel download kar lein.")) {
-            localStorage.removeItem('karigarDataEntries');
-            renderDataEntryTable();
-        }
+    function updateKarigarSuggestions() {
+        const datalist = document.getElementById('karigarSuggestions');
+        const names = new Set();
+        Object.values(partyFolders).forEach(list => {
+            list.forEach(item => {
+                if (item.karigar) names.add(item.karigar);
+            });
+        });
+        datalist.innerHTML = '';
+        names.forEach(name => {
+            datalist.innerHTML += `<option value="${name}">`;
+        });
     }
 
-    function exportDataToExcel() {
-        const entries = JSON.parse(localStorage.getItem('karigarDataEntries') || '[]');
+    // ==========================================
+    // PDF SAVE / PRINT FUNCTIONS (DATA ENTRY)
+    // ==========================================
+    function saveCurrentPartyPDF() {
+        const entries = partyFolders[activeParty] || [];
         if (entries.length === 0) {
-            return alert("Excel export karne ke liye pehle kam se kam ek entry add karein!");
+            return alert(`"${activeParty}" folder mein abhi koi entry nahi hai!`);
         }
 
-        // Create CSV content with BOM for proper Excel UTF-8 support
-        let csvContent = "\uFEFF";
-        csvContent += "S.No,Date,Lot Number,Quantity,Shirt Type (Half/Full),Karigar Name\n";
+        const cleanPartyName = activeParty.replace(/[^a-zA-Z0-9_-]/g, '_');
+        const originalTitle = document.title;
+        document.title = `${cleanPartyName}_Production_Report`;
 
-        let totalQty = 0;
-        entries.forEach((item, idx) => {
-            const formattedDate = item.date ? item.date.split('-').reverse().join('/') : '';
-            const safeLot = `"${String(item.lotNo).replace(/"/g, '""')}"`;
-            const safeKarigar = `"${String(item.karigarName).replace(/"/g, '""')}"`;
-            totalQty += parseFloat(item.qty) || 0;
+        window.print();
 
-            csvContent += `${idx + 1},${formattedDate},${safeLot},${item.qty},${item.shirtType},${safeKarigar}\n`;
+        setTimeout(() => {
+            document.title = originalTitle;
+        }, 1000);
+    }
+
+    function saveAllPartiesPDF() {
+        const printArea = document.getElementById('allPartiesPrintArea');
+        printArea.innerHTML = '';
+        let hasAnyData = false;
+
+        Object.keys(partyFolders).forEach(partyName => {
+            const entries = partyFolders[partyName];
+            if (entries && entries.length > 0) {
+                hasAnyData = true;
+                let totalQty = 0;
+                let rowsHtml = '';
+
+                entries.forEach(e => {
+                    totalQty += parseFloat(e.qty) || 0;
+                    rowsHtml += `
+                        <tr>
+                            <td>${e.date}</td>
+                            <td><strong>#${e.lotNo}</strong></td>
+                            <td><strong>${e.qty}</strong></td>
+                            <td>${e.shirtType}</td>
+                            <td>${e.karigar}</td>
+                        </tr>
+                    `;
+                });
+
+                printArea.innerHTML += `
+                    <div style="margin-bottom: 25px; page-break-inside: avoid;">
+                        <div class="folder-stats" style="margin-bottom: 8px;">
+                            <div>📂 Party Name: <strong style="color:#f9b208;">${partyName}</strong></div>
+                            <div>📦 Entries: <strong>${entries.length}</strong></div>
+                            <div>🔢 Total Qty: <strong>${totalQty}</strong></div>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Lot No.</th>
+                                    <th>Quantity</th>
+                                    <th>Shirt Type</th>
+                                    <th>Karigar Name</th>
+                                </tr>
+                            </thead>
+                            <tbody>${rowsHtml}</tbody>
+                        </table>
+                    </div>
+                `;
+            }
         });
 
-        csvContent += `\n,,TOTAL QUANTITY,${totalQty},,\n`;
+        if (!hasAnyData) {
+            return alert("Abhi kisi bhi Party folder mein koi data nahi hai!");
+        }
 
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        
-        const todayStr = new Date().toISOString().slice(0, 10);
-        link.setAttribute("href", url);
-        link.setAttribute("download", `Jay_Ranjeet_Data_Entry_${todayStr}.csv`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        const originalTitle = document.title;
+        document.title = `Jay_Ranjeet_All_Parties_Report`;
+        document.body.classList.add('printing-all-parties');
+
+        window.print();
+
+        setTimeout(() => {
+            document.body.classList.remove('printing-all-parties');
+            document.title = originalTitle;
+        }, 1000);
     }
 </script>
 </body>

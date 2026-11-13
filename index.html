@@ -382,6 +382,8 @@
         .btn-history { background-color: #334155; }
         .btn-item-mgr { background-color: #d97706; }
         .btn-pdf-party { background-color: var(--primary-pink); }
+        .btn-backup { background-color: #0284c7; }
+        .btn-restore { background-color: #15803d; }
 
         .btn-sm {
             padding: 5px 8px;
@@ -488,6 +490,19 @@
             gap: 8px;
         }
 
+        .sync-box {
+            background: var(--light-navy-bg);
+            border: 1px solid #cbd5e1;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
         .footer-credits {
             margin-top: 30px;
             padding-top: 15px;
@@ -503,7 +518,6 @@
             font-weight: bold;
         }
 
-        /* Dedicated Hidden Container for All-Parties PDF Print */
         #allPartiesPrintArea {
             display: none;
         }
@@ -516,9 +530,8 @@
         @media print {
             body { background: white; padding: 0; }
             .container { box-shadow: none; border: none; width: 100%; max-width: 100%; padding: 0; }
-            /* Hide Logo/Header during Data Entry print */
             body.printing-data-entry .header-banner { display: none !important; }
-            .nav-tabs, .item-box, .btn-add, .action-btns, .history-section, .delete-col, .logo-upload-btn, .item-manager-box, .upi-input-group, .party-folder-bar, .no-print { display: none !important; }
+            .nav-tabs, .item-box, .btn-add, .action-btns, .history-section, .delete-col, .logo-upload-btn, .item-manager-box, .upi-input-group, .party-folder-bar, .sync-box, .no-print { display: none !important; }
             input, select { border: none !important; background: transparent !important; -webkit-appearance: none; }
             th { background-color: #071e48 !important; color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .folder-stats { background-color: #071e48 !important; color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -556,6 +569,21 @@
     <div class="nav-tabs">
         <button class="nav-tab active" id="tabBtnBilling" onclick="switchMainTab('billing')">🧾 Billing & Invoice</button>
         <button class="nav-tab" id="tabBtnDataEntry" onclick="switchMainTab('dataEntry')">📋 Data Entry (Production & PDF)</button>
+    </div>
+
+    <!-- Cloud Sync / Device Transfer Bar -->
+    <div class="sync-box">
+        <div>
+            <strong style="color:var(--primary-navy); font-size:13px;">📱 Dusre Phone / Laptop mein Data Transfer Karein:</strong>
+            <p style="font-size:11px; color:#555;">Backup file download karke dusre device par upload karein.</p>
+        </div>
+        <div style="display:flex; gap:8px;">
+            <button class="btn-sm btn-backup" style="padding:7px 12px;" onclick="downloadDataBackup()">📥 Download Backup</button>
+            <label class="btn-sm btn-restore" style="padding:7px 12px; cursor:pointer; display:inline-block; margin-bottom:0;">
+                📤 Upload Backup
+                <input type="file" id="backupFileInput" accept=".json" style="display:none;" onchange="restoreDataBackup(event)">
+            </label>
+        </div>
     </div>
 
     <!-- ========================================== -->
@@ -805,16 +833,10 @@
 </div>
 
 <script>
-    // ==========================================
-    // GLOBAL & BILLING VARIABLES
-    // ==========================================
     let currentBillItems = [];
     let editingBillIndex = null;
     const defaultMasterItems = ["D cut bag", "Box bag", "W cut bag", "Loop Handle Bag", "Star flex", "Visiting Card", "Vinyl Print", "Bill Book"];
 
-    // ==========================================
-    // DATA ENTRY & PARTY FOLDER VARIABLES
-    // ==========================================
     let partyFolders = {}; 
     let activeParty = "General";
     let selectedShirtType = "Half"; 
@@ -829,11 +851,9 @@
         loadSavedUpiId();
         loadHistory();
         updateQRCode();
-
         initDataEntrySystem();
     };
 
-    // Helper: Make 1st letter capital automatically
     function capitalizeFirstLetter(inputElem) {
         let val = inputElem.value;
         if (val && val.length > 0) {
@@ -931,9 +951,6 @@
         document.getElementById('entryDate').value = formatted;
     }
 
-    // ==========================================
-    // BILLING LOGIC
-    // ==========================================
     function generateBillNumber() {
         let lastNo = localStorage.getItem('lastBillNo') || 1000;
         let nextNo = parseInt(lastNo) + 1;
@@ -1212,6 +1229,65 @@
     }
 
     // ==========================================
+    // BACKUP & RESTORE FUNCTIONS (DEVICE SYNC)
+    // ==========================================
+    function downloadDataBackup() {
+        const backupData = {
+            partyFolders: partyFolders,
+            savedBills: JSON.parse(localStorage.getItem('savedBills') || '[]'),
+            masterItemList: JSON.parse(localStorage.getItem('masterItemList') || '[]'),
+            lastBillNo: localStorage.getItem('lastBillNo') || 1000,
+            savedUpiId: localStorage.getItem('savedUpiId') || '',
+            customHeaderLogo: localStorage.getItem('customHeaderLogo') || ''
+        };
+
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData, null, 2));
+        const downloadAnchor = document.createElement('a');
+        downloadAnchor.setAttribute("href", dataStr);
+        downloadAnchor.setAttribute("download", `Jay_Ranjeet_Backup_${getTodayFormatted().replace(/\//g, '-')}.json`);
+        document.body.appendChild(downloadAnchor);
+        downloadAnchor.click();
+        downloadAnchor.remove();
+    }
+
+    function restoreDataBackup(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const backupData = JSON.parse(e.target.result);
+                if (backupData.partyFolders) {
+                    partyFolders = backupData.partyFolders;
+                    localStorage.setItem('jr_party_folders', JSON.stringify(partyFolders));
+                }
+                if (backupData.savedBills) {
+                    localStorage.setItem('savedBills', JSON.stringify(backupData.savedBills));
+                }
+                if (backupData.masterItemList) {
+                    localStorage.setItem('masterItemList', JSON.stringify(backupData.masterItemList));
+                }
+                if (backupData.lastBillNo) {
+                    localStorage.setItem('lastBillNo', backupData.lastBillNo);
+                }
+                if (backupData.savedUpiId) {
+                    localStorage.setItem('savedUpiId', backupData.savedUpiId);
+                }
+                if (backupData.customHeaderLogo) {
+                    localStorage.setItem('customHeaderLogo', backupData.customHeaderLogo);
+                }
+
+                alert("Data Successfully Restore Ho Gaya!");
+                location.reload();
+            } catch (err) {
+                alert("Backup file galat ya corrupt hai!");
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    // ==========================================
     // DATA ENTRY & PARTY FOLDER SYSTEM LOGIC
     // ==========================================
     function initDataEntrySystem() {
@@ -1234,7 +1310,6 @@
         const savedShirt = localStorage.getItem('jr_sticky_shirt_type') || 'Half';
         selectShirtType(savedShirt, false);
 
-        // Load sticky Rate if saved
         const savedRate = localStorage.getItem('jr_sticky_rate') || '';
         document.getElementById('entryRate').value = savedRate;
 
@@ -1338,7 +1413,6 @@
         document.getElementById('entryLotNo').value = nextLot;
     }
 
-    // Save entry when Enter key is pressed
     function handleEnterKey(event) {
         if (event.key === 'Enter') {
             event.preventDefault();
@@ -1356,7 +1430,6 @@
         if (!lotNo) return alert("Lot Number daalna zaroori hai!");
         if (!qty || parseFloat(qty) <= 0) return alert("Sahi Quantity daalein!");
 
-        // Save sticky rate preference
         if (rate) {
             localStorage.setItem('jr_sticky_rate', rate);
         }
@@ -1405,7 +1478,6 @@
         renderPartyEntries();
         updateKarigarSuggestions();
 
-        // Reset Qty & Auto-Increment Lot Number (+1), Keep Rate & Shirt Type ready
         document.getElementById('entryQty').value = '';
         updateNextLotNumber();
         document.getElementById('entryQty').focus();
@@ -1524,9 +1596,6 @@
         });
     }
 
-    // ==========================================
-    // PDF SAVE / PRINT FUNCTIONS (DATA ENTRY)
-    // ==========================================
     function saveCurrentPartyPDF() {
         const entries = partyFolders[activeParty] || [];
         if (entries.length === 0) {

@@ -3,10 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jay Ranjeet - Billing & Production Data Entry App</title>
+    <title>Jay Ranjeet - Cloud Live Sync App</title>
     
     <!-- Browser Tab JR Favicon Icon (Navy & Pink Theme) -->
     <link id="dynamicFavicon" rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIwIiBmaWxsPSIjMDcxZTQ4Ii8+PHRleHQgeD0iNTAlIiB5PSI2NSUiIGZvbnQtc2l6ZT0iNTAiIGZvbnQtd2VpZ2h0PSJib2xkIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZmlsbD0iI2U2MWE3MyIgdGV4dC1hbmNob3I9Im1pZGRsZSI+SlI8L3RleHQ+PC9zdmc+">
+
+    <!-- Firebase SDKs for Real-Time Cloud Sync -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
     <style>
         :root {
@@ -42,6 +46,15 @@
             border-radius: 12px;
             box-shadow: 0 6px 20px rgba(7, 30, 72, 0.12);
             border-top: 5px solid var(--primary-navy);
+        }
+
+        /* Cloud Status Indicator */
+        .sync-status {
+            text-align: right;
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: #15803d;
         }
 
         /* Header Banner */
@@ -382,8 +395,6 @@
         .btn-history { background-color: #334155; }
         .btn-item-mgr { background-color: #d97706; }
         .btn-pdf-party { background-color: var(--primary-pink); }
-        .btn-backup { background-color: #0284c7; }
-        .btn-restore { background-color: #15803d; }
 
         .btn-sm {
             padding: 5px 8px;
@@ -490,19 +501,6 @@
             gap: 8px;
         }
 
-        .sync-box {
-            background: var(--light-navy-bg);
-            border: 1px solid #cbd5e1;
-            padding: 12px 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
         .footer-credits {
             margin-top: 30px;
             padding-top: 15px;
@@ -531,7 +529,7 @@
             body { background: white; padding: 0; }
             .container { box-shadow: none; border: none; width: 100%; max-width: 100%; padding: 0; }
             body.printing-data-entry .header-banner { display: none !important; }
-            .nav-tabs, .item-box, .btn-add, .action-btns, .history-section, .delete-col, .logo-upload-btn, .item-manager-box, .upi-input-group, .party-folder-bar, .sync-box, .no-print { display: none !important; }
+            .nav-tabs, .item-box, .btn-add, .action-btns, .history-section, .delete-col, .logo-upload-btn, .item-manager-box, .upi-input-group, .party-folder-bar, .no-print, .sync-status { display: none !important; }
             input, select { border: none !important; background: transparent !important; -webkit-appearance: none; }
             th { background-color: #071e48 !important; color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .folder-stats { background-color: #071e48 !important; color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -549,6 +547,8 @@
 </head>
 <body>
 <div class="container">
+    <div class="sync-status" id="syncStatus">☁️ Cloud Sync: Connecting...</div>
+
     <!-- Header Banner -->
     <div class="header-banner">
         <img id="bannerImg" src="logo.png" alt="Jay Ranjeet Graphic Design" onerror="showFallbackHeader()">
@@ -571,26 +571,10 @@
         <button class="nav-tab" id="tabBtnDataEntry" onclick="switchMainTab('dataEntry')">📋 Data Entry (Production & PDF)</button>
     </div>
 
-    <!-- Cloud Sync / Device Transfer Bar -->
-    <div class="sync-box">
-        <div>
-            <strong style="color:var(--primary-navy); font-size:13px;">📱 Dusre Phone / Laptop mein Data Transfer Karein:</strong>
-            <p style="font-size:11px; color:#555;">Backup file download karke dusre device par upload karein.</p>
-        </div>
-        <div style="display:flex; gap:8px;">
-            <button class="btn-sm btn-backup" style="padding:7px 12px;" onclick="downloadDataBackup()">📥 Download Backup</button>
-            <label class="btn-sm btn-restore" style="padding:7px 12px; cursor:pointer; display:inline-block; margin-bottom:0;">
-                📤 Upload Backup
-                <input type="file" id="backupFileInput" accept=".json" style="display:none;" onchange="restoreDataBackup(event)">
-            </label>
-        </div>
-    </div>
-
     <!-- ========================================== -->
     <!-- TAB 1: BILLING APP                         -->
     <!-- ========================================== -->
     <div id="billingTab" class="tab-content active">
-        <!-- Bill Metadata -->
         <div class="meta-grid">
             <div class="form-group">
                 <label>Bill No. (Auto)</label>
@@ -610,7 +594,6 @@
             </div>
         </div>
 
-        <!-- Item List Manager Box -->
         <div class="item-manager-box" id="itemManagerBox">
             <h4>➕ Manage Options List</h4>
             <div class="item-manager-grid">
@@ -621,7 +604,6 @@
             <div class="item-tags" id="itemTagsContainer"></div>
         </div>
 
-        <!-- Bill Input Form -->
         <div class="item-box">
             <div class="item-grid" style="grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));">
                 <div class="form-group">
@@ -652,7 +634,6 @@
             <button class="btn-add" onclick="addItem()">+ Add Item To Bill</button>
         </div>
 
-        <!-- Items Table -->
         <div class="table-responsive">
             <table id="billTable">
                 <thead>
@@ -669,7 +650,6 @@
             </table>
         </div>
 
-        <!-- Payment Summary Section -->
         <div class="payment-summary-section">
             <div class="payment-grid">
                 <div class="summary-box grand-total">
@@ -696,7 +676,6 @@
             </div>
         </div>
 
-        <!-- Action Buttons -->
         <div class="action-btns">
             <button class="btn btn-save" onclick="saveBill()">💾 Save Bill</button>
             <button class="btn btn-print" onclick="generatePDF()">📄 Save PDF / Print</button>
@@ -704,7 +683,6 @@
             <button class="btn btn-history" onclick="toggleHistory()">📜 Old Bills Record</button>
         </div>
 
-        <!-- History Section -->
         <div class="history-section" id="historySection">
             <h3 style="color: var(--primary-navy); margin-bottom: 10px;">Old Bills Record</h3>
             <div class="table-responsive">
@@ -731,10 +709,9 @@
     <!-- TAB 2: DATA ENTRY (PRODUCTION & PDF)       -->
     <!-- ========================================== -->
     <div id="dataEntryTab" class="tab-content">
-        <!-- Party Folder Selection / Creation -->
         <div class="party-folder-bar">
             <div class="party-folder-header">
-                <h3>📁 Party Folder Selection</h3>
+                <h3>📁 Party Folder Selection (Cloud Synced)</h3>
                 <div style="display:flex; gap:8px; flex-wrap:wrap;">
                     <button class="btn-sm btn-pdf-party" style="padding:8px 14px; font-size:13px;" onclick="saveCurrentPartyPDF()">📄 Save Party PDF / Print</button>
                     <button class="btn-sm btn-edit-sm" style="padding:8px 14px; font-size:13px;" onclick="saveAllPartiesPDF()">📑 Save All Parties PDF</button>
@@ -755,7 +732,6 @@
             </div>
         </div>
 
-        <!-- Folder Summary Bar with Half/Full Totals & Amounts -->
         <div class="folder-stats">
             <div>📂 Party: <strong id="activeFolderNameLabel" style="color:var(--accent-yellow);">General</strong></div>
             <div>📦 Total Entries: <strong id="folderTotalEntries">0</strong></div>
@@ -764,7 +740,6 @@
             <div>💰 Total Qty: <strong id="folderTotalQty">0</strong> | Total Amt: ₹<strong id="folderTotalAmt" style="color:var(--accent-yellow);">0.00</strong></div>
         </div>
 
-        <!-- Data Entry Input Box (Press Enter to add directly) -->
         <div class="item-box" style="border-left: 4px solid var(--primary-pink);">
             <h4 id="entryFormTitle" style="color:var(--primary-navy); margin-bottom:12px; font-size:15px;">➕ New Production / Lot Entry (Press Enter to Save)</h4>
             <div class="item-grid">
@@ -803,7 +778,6 @@
             </div>
         </div>
 
-        <!-- Party Entries Table -->
         <div class="table-responsive">
             <table>
                 <thead>
@@ -823,21 +797,46 @@
         </div>
     </div>
 
-    <!-- Hidden Section Used Only When Printing All Parties Together -->
     <div id="allPartiesPrintArea"></div>
 
-    <!-- Footer Credits -->
     <div class="footer-credits">
         Developed & Managed by: <span>Sahil Vashishtha</span> | Contact: <span>7067842840 / 9111799751</span>
     </div>
 </div>
 
 <script>
+    // ==========================================
+    // FIREBASE CLOUD DATABASE CONFIGURATION
+    // ==========================================
+    const firebaseConfig = {
+        apiKey: "AIzaSyDummyKeyForDemoPurposesOnly12345",
+        authDomain: "jay-ranjeet-billing.firebaseapp.com",
+        databaseURL: "https://jay-ranjeet-default-rtdb.firebaseio.com/",
+        projectId: "jay-ranjeet-billing",
+        storageBucket: "jay-ranjeet-billing.appspot.com",
+        messagingSenderId: "1234567890",
+        appId: "1:1234567890:web:abcdef"
+    };
+
+    // Initialize Firebase
+    try {
+        firebase.initializeApp(firebaseConfig);
+        var db = firebase.database();
+    } catch (e) {
+        console.log("Firebase init note:", e);
+    }
+
+    let cloudPartyFolders = {};
+    let cloudMasterItems = [];
+    let cloudSavedBills = [];
+
+    // ==========================================
+    // GLOBAL & BILLING VARIABLES
+    // ==========================================
     let currentBillItems = [];
     let editingBillIndex = null;
     const defaultMasterItems = ["D cut bag", "Box bag", "W cut bag", "Loop Handle Bag", "Star flex", "Visiting Card", "Vinyl Print", "Bill Book"];
 
-    let partyFolders = {}; 
     let activeParty = "General";
     let selectedShirtType = "Half"; 
     let editingEntryId = null;
@@ -847,12 +846,66 @@
         loadSavedLogo();
         setCurrentDate();
         generateBillNumber();
-        initMasterItems();
+        initCloudSync();
         loadSavedUpiId();
-        loadHistory();
-        updateQRCode();
-        initDataEntrySystem();
     };
+
+    // Real-time Listeners for Cloud Sync
+    function initCloudSync() {
+        if (typeof db === 'undefined') {
+            document.getElementById('syncStatus').innerText = "⚠️ Cloud Offline (Using Local)";
+            initMasterItemsLocal();
+            initDataEntryLocal();
+            loadHistoryLocal();
+            return;
+        }
+
+        document.getElementById('syncStatus').innerText = "☁️ Cloud Sync: Connected (Live)";
+
+        // 1. Sync Party Folders in Real-time
+        db.ref('jay_ranjeet/partyFolders').on('value', (snapshot) => {
+            const val = snapshot.val();
+            if (val) {
+                cloudPartyFolders = val;
+            } else {
+                cloudPartyFolders = { "General": [] };
+                db.ref('jay_ranjeet/partyFolders').set(cloudPartyFolders);
+            }
+            if (!cloudPartyFolders[activeParty]) {
+                activeParty = Object.keys(cloudPartyFolders)[0];
+            }
+            populatePartyDropdown();
+            renderPartyEntries();
+            updateNextLotNumber();
+            updateKarigarSuggestions();
+        });
+
+        // 2. Sync Master Items in Real-time
+        db.ref('jay_ranjeet/masterItems').on('value', (snapshot) => {
+            const val = snapshot.val();
+            if (val) {
+                cloudMasterItems = val;
+            } else {
+                cloudMasterItems = defaultMasterItems;
+                db.ref('jay_ranjeet/masterItems').set(cloudMasterItems);
+            }
+            populateDropdown(cloudMasterItems);
+            renderItemTags(cloudMasterItems);
+        });
+
+        // 3. Sync Saved Bills in Real-time
+        db.ref('jay_ranjeet/savedBills').on('value', (snapshot) => {
+            const val = snapshot.val();
+            cloudSavedBills = val ? val : [];
+            loadHistory();
+        });
+
+        const savedShirt = localStorage.getItem('jr_sticky_shirt_type') || 'Half';
+        selectShirtType(savedShirt, false);
+
+        const savedRate = localStorage.getItem('jr_sticky_rate') || '';
+        document.getElementById('entryRate').value = savedRate;
+    }
 
     function capitalizeFirstLetter(inputElem) {
         let val = inputElem.value;
@@ -957,16 +1010,6 @@
         document.getElementById('billNo').value = "JR-" + nextNo;
     }
 
-    function initMasterItems() {
-        let items = JSON.parse(localStorage.getItem('masterItemList'));
-        if (!items || items.length === 0) {
-            items = defaultMasterItems;
-            localStorage.setItem('masterItemList', JSON.stringify(items));
-        }
-        populateDropdown(items);
-        renderItemTags(items);
-    }
-
     function populateDropdown(items) {
         const select = document.getElementById('itemSelect');
         select.innerHTML = '';
@@ -990,20 +1033,22 @@
         const val = input.value.trim();
         if (!val) return alert("Please enter item name!");
 
-        let items = JSON.parse(localStorage.getItem('masterItemList')) || [];
+        let items = [...cloudMasterItems];
         if (!items.includes(val)) {
             items.push(val);
-            localStorage.setItem('masterItemList', JSON.stringify(items));
-            initMasterItems();
+            if (typeof db !== 'undefined') {
+                db.ref('jay_ranjeet/masterItems').set(items);
+            }
             input.value = '';
         }
     }
 
     function removeMasterItem(index) {
-        let items = JSON.parse(localStorage.getItem('masterItemList')) || [];
+        let items = [...cloudMasterItems];
         items.splice(index, 1);
-        localStorage.setItem('masterItemList', JSON.stringify(items));
-        initMasterItems();
+        if (typeof db !== 'undefined') {
+            db.ref('jay_ranjeet/masterItems').set(items);
+        }
     }
 
     function toggleItemManager() {
@@ -1123,7 +1168,7 @@
         const amountPaid = parseFloat(document.getElementById('amountPaid').value) || 0;
         const balanceDue = document.getElementById('balanceDue').innerText;
 
-        let savedBills = JSON.parse(localStorage.getItem('savedBills') || '[]');
+        let savedBills = [...cloudSavedBills];
         const billObj = { billNo, date, custName, custPhone, items: currentBillItems, grandTotal, amountPaid, balanceDue };
 
         if (editingBillIndex !== null) {
@@ -1137,8 +1182,9 @@
             alert("Bill Saved Successfully!");
         }
 
-        localStorage.setItem('savedBills', JSON.stringify(savedBills));
-        loadHistory();
+        if (typeof db !== 'undefined') {
+            db.ref('jay_ranjeet/savedBills').set(savedBills);
+        }
         resetForm();
     }
 
@@ -1177,9 +1223,8 @@
     function loadHistory() {
         const tbody = document.getElementById('historyBody');
         tbody.innerHTML = '';
-        let savedBills = JSON.parse(localStorage.getItem('savedBills') || '[]');
 
-        savedBills.forEach((bill, index) => {
+        cloudSavedBills.forEach((bill, index) => {
             tbody.innerHTML += `
                 <tr>
                     <td>${bill.billNo}</td>
@@ -1200,9 +1245,7 @@
     }
 
     function editHistoryBill(index) {
-        let savedBills = JSON.parse(localStorage.getItem('savedBills') || '[]');
-        let bill = savedBills[index];
-
+        let bill = cloudSavedBills[index];
         editingBillIndex = index;
         document.getElementById('billNo').value = bill.billNo;
         document.getElementById('billDate').value = bill.date;
@@ -1221,113 +1264,26 @@
 
     function deleteHistoryBill(index) {
         if (confirm("Are you sure you want to delete this bill record?")) {
-            let savedBills = JSON.parse(localStorage.getItem('savedBills') || '[]');
-            savedBills.splice(index, 1);
-            localStorage.setItem('savedBills', JSON.stringify(savedBills));
+            cloudSavedBills.splice(index, 1);
+            if (typeof db !== 'undefined') {
+                db.ref('jay_ranjeet/savedBills').set(cloudSavedBills);
+            }
             loadHistory();
         }
     }
 
     // ==========================================
-    // BACKUP & RESTORE FUNCTIONS (DEVICE SYNC)
+    // CLOUD DATA ENTRY & PARTY FOLDER LOGIC
     // ==========================================
-    function downloadDataBackup() {
-        const backupData = {
-            partyFolders: partyFolders,
-            savedBills: JSON.parse(localStorage.getItem('savedBills') || '[]'),
-            masterItemList: JSON.parse(localStorage.getItem('masterItemList') || '[]'),
-            lastBillNo: localStorage.getItem('lastBillNo') || 1000,
-            savedUpiId: localStorage.getItem('savedUpiId') || '',
-            customHeaderLogo: localStorage.getItem('customHeaderLogo') || ''
-        };
-
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData, null, 2));
-        const downloadAnchor = document.createElement('a');
-        downloadAnchor.setAttribute("href", dataStr);
-        downloadAnchor.setAttribute("download", `Jay_Ranjeet_Backup_${getTodayFormatted().replace(/\//g, '-')}.json`);
-        document.body.appendChild(downloadAnchor);
-        downloadAnchor.click();
-        downloadAnchor.remove();
-    }
-
-    function restoreDataBackup(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            try {
-                const backupData = JSON.parse(e.target.result);
-                if (backupData.partyFolders) {
-                    partyFolders = backupData.partyFolders;
-                    localStorage.setItem('jr_party_folders', JSON.stringify(partyFolders));
-                }
-                if (backupData.savedBills) {
-                    localStorage.setItem('savedBills', JSON.stringify(backupData.savedBills));
-                }
-                if (backupData.masterItemList) {
-                    localStorage.setItem('masterItemList', JSON.stringify(backupData.masterItemList));
-                }
-                if (backupData.lastBillNo) {
-                    localStorage.setItem('lastBillNo', backupData.lastBillNo);
-                }
-                if (backupData.savedUpiId) {
-                    localStorage.setItem('savedUpiId', backupData.savedUpiId);
-                }
-                if (backupData.customHeaderLogo) {
-                    localStorage.setItem('customHeaderLogo', backupData.customHeaderLogo);
-                }
-
-                alert("Data Successfully Restore Ho Gaya!");
-                location.reload();
-            } catch (err) {
-                alert("Backup file galat ya corrupt hai!");
-            }
-        };
-        reader.readAsText(file);
-    }
-
-    // ==========================================
-    // DATA ENTRY & PARTY FOLDER SYSTEM LOGIC
-    // ==========================================
-    function initDataEntrySystem() {
-        const storedFolders = localStorage.getItem('jr_party_folders');
-        if (storedFolders) {
-            partyFolders = JSON.parse(storedFolders);
-        }
-        if (Object.keys(partyFolders).length === 0) {
-            partyFolders["General"] = [];
-            savePartyFoldersToStorage();
-        }
-
-        const savedActiveParty = localStorage.getItem('jr_active_party');
-        if (savedActiveParty && partyFolders[savedActiveParty]) {
-            activeParty = savedActiveParty;
-        } else {
-            activeParty = Object.keys(partyFolders)[0];
-        }
-
-        const savedShirt = localStorage.getItem('jr_sticky_shirt_type') || 'Half';
-        selectShirtType(savedShirt, false);
-
-        const savedRate = localStorage.getItem('jr_sticky_rate') || '';
-        document.getElementById('entryRate').value = savedRate;
-
-        populatePartyDropdown();
-        renderPartyEntries();
-        updateNextLotNumber();
-        updateKarigarSuggestions();
-    }
-
-    function savePartyFoldersToStorage() {
-        localStorage.setItem('jr_party_folders', JSON.stringify(partyFolders));
-    }
-
     function populatePartyDropdown() {
         const select = document.getElementById('partyFolderSelect');
         select.innerHTML = '';
-        Object.keys(partyFolders).forEach(partyName => {
-            const count = partyFolders[partyName].length;
+        if (!cloudPartyFolders[activeParty]) {
+            activeParty = Object.keys(cloudPartyFolders)[0] || "General";
+        }
+        Object.keys(cloudPartyFolders).forEach(partyName => {
+            const entries = cloudPartyFolders[partyName] || [];
+            const count = entries.length;
             const selected = partyName === activeParty ? 'selected' : '';
             select.innerHTML += `<option value="${partyName}" ${selected}>📁 ${partyName} (${count} entries)</option>`;
         });
@@ -1339,15 +1295,16 @@
         const name = input.value.trim();
         if (!name) return alert("Kripya Party ka naam likhein!");
 
-        if (partyFolders[name]) {
-            alert("Yeh Party Folder pehle se bana hua hai! Use select kar diya gaya hai.");
+        if (cloudPartyFolders[name]) {
+            alert("Yeh Party Folder pehle se bana hua hai!");
         } else {
-            partyFolders[name] = [];
-            savePartyFoldersToStorage();
+            cloudPartyFolders[name] = [];
+            if (typeof db !== 'undefined') {
+                db.ref('jay_ranjeet/partyFolders').set(cloudPartyFolders);
+            }
         }
 
         activeParty = name;
-        localStorage.setItem('jr_active_party', activeParty);
         input.value = '';
         cancelEntryEdit();
         populatePartyDropdown();
@@ -1357,7 +1314,6 @@
 
     function onPartyChange() {
         activeParty = document.getElementById('partyFolderSelect').value;
-        localStorage.setItem('jr_active_party', activeParty);
         document.getElementById('activeFolderNameLabel').innerText = activeParty;
         cancelEntryEdit();
         renderPartyEntries();
@@ -1365,15 +1321,16 @@
     }
 
     function deleteCurrentPartyFolder() {
-        const folderNames = Object.keys(partyFolders);
+        const folderNames = Object.keys(cloudPartyFolders);
         if (folderNames.length <= 1) {
             return alert("Kam se kam ek Party Folder hona zaroori hai.");
         }
         if (confirm(`Kya aap "${activeParty}" folder aur uska saara data delete karna chahte hain?`)) {
-            delete partyFolders[activeParty];
-            savePartyFoldersToStorage();
-            activeParty = Object.keys(partyFolders)[0];
-            localStorage.setItem('jr_active_party', activeParty);
+            delete cloudPartyFolders[activeParty];
+            if (typeof db !== 'undefined') {
+                db.ref('jay_ranjeet/partyFolders').set(cloudPartyFolders);
+            }
+            activeParty = Object.keys(cloudPartyFolders)[0];
             populatePartyDropdown();
             renderPartyEntries();
             updateNextLotNumber();
@@ -1399,7 +1356,7 @@
     function updateNextLotNumber() {
         if (editingEntryId !== null) return;
 
-        const entries = partyFolders[activeParty] || [];
+        const entries = cloudPartyFolders[activeParty] || [];
         let maxLot = 0;
 
         entries.forEach(item => {
@@ -1438,14 +1395,14 @@
         const parsedQty = parseFloat(qty) || 0;
         const totalAmount = parsedQty * parsedRate;
 
-        if (!partyFolders[activeParty]) {
-            partyFolders[activeParty] = [];
+        if (!cloudPartyFolders[activeParty]) {
+            cloudPartyFolders[activeParty] = [];
         }
 
         if (editingEntryId !== null) {
-            const idx = partyFolders[activeParty].findIndex(e => e.id === editingEntryId);
+            const idx = cloudPartyFolders[activeParty].findIndex(e => e.id === editingEntryId);
             if (idx !== -1) {
-                partyFolders[activeParty][idx] = {
+                cloudPartyFolders[activeParty][idx] = {
                     id: editingEntryId,
                     date,
                     lotNo: parseInt(lotNo) || lotNo,
@@ -1461,7 +1418,7 @@
             document.getElementById('saveEntryBtn').innerText = "💾 Save Entry (Enter)";
             document.getElementById('cancelEditEntryBtn').style.display = "none";
         } else {
-            partyFolders[activeParty].push({
+            cloudPartyFolders[activeParty].push({
                 id: Date.now(),
                 date,
                 lotNo: parseInt(lotNo) || lotNo,
@@ -1473,10 +1430,9 @@
             });
         }
 
-        savePartyFoldersToStorage();
-        populatePartyDropdown();
-        renderPartyEntries();
-        updateKarigarSuggestions();
+        if (typeof db !== 'undefined') {
+            db.ref('jay_ranjeet/partyFolders').set(cloudPartyFolders);
+        }
 
         document.getElementById('entryQty').value = '';
         updateNextLotNumber();
@@ -1487,7 +1443,7 @@
         const tbody = document.getElementById('partyEntriesBody');
         tbody.innerHTML = '';
 
-        const entries = partyFolders[activeParty] || [];
+        const entries = cloudPartyFolders[activeParty] || [];
         let totalQty = 0;
         let totalAmt = 0;
         let halfQty = 0;
@@ -1540,7 +1496,7 @@
     }
 
     function editDataEntry(id) {
-        const entries = partyFolders[activeParty] || [];
+        const entries = cloudPartyFolders[activeParty] || [];
         const entry = entries.find(e => e.id === id);
         if (!entry) return;
 
@@ -1574,10 +1530,10 @@
 
     function deleteDataEntry(id) {
         if (confirm("Kya aap is entry ko delete karna chahte hain?")) {
-            partyFolders[activeParty] = partyFolders[activeParty].filter(e => e.id !== id);
-            savePartyFoldersToStorage();
-            populatePartyDropdown();
-            renderPartyEntries();
+            cloudPartyFolders[activeParty] = cloudPartyFolders[activeParty].filter(e => e.id !== id);
+            if (typeof db !== 'undefined') {
+                db.ref('jay_ranjeet/partyFolders').set(cloudPartyFolders);
+            }
             updateNextLotNumber();
         }
     }
@@ -1585,7 +1541,7 @@
     function updateKarigarSuggestions() {
         const datalist = document.getElementById('karigarSuggestions');
         const names = new Set();
-        Object.values(partyFolders).forEach(list => {
+        Object.values(cloudPartyFolders).forEach(list => {
             list.forEach(item => {
                 if (item.karigar && item.karigar !== '-') names.add(item.karigar);
             });
@@ -1597,7 +1553,7 @@
     }
 
     function saveCurrentPartyPDF() {
-        const entries = partyFolders[activeParty] || [];
+        const entries = cloudPartyFolders[activeParty] || [];
         if (entries.length === 0) {
             return alert(`"${activeParty}" folder mein abhi koi entry nahi hai!`);
         }
@@ -1620,8 +1576,8 @@
         printArea.innerHTML = '';
         let hasAnyData = false;
 
-        Object.keys(partyFolders).forEach(partyName => {
-            const entries = partyFolders[partyName];
+        Object.keys(cloudPartyFolders).forEach(partyName => {
+            const entries = cloudPartyFolders[partyName];
             if (entries && entries.length > 0) {
                 hasAnyData = true;
                 let totalQty = 0;

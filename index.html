@@ -3,14 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jay Ranjeet - Cloud Live Sync App</title>
+    <title>Jay Ranjeet - Billing & Production Data Entry App</title>
     
     <!-- Browser Tab JR Favicon Icon (Navy & Pink Theme) -->
     <link id="dynamicFavicon" rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIwIiBmaWxsPSIjMDcxZTQ4Ii8+PHRleHQgeD0iNTAlIiB5PSI2NSUiIGZvbnQtc2l6ZT0iNTAiIGZvbnQtd2VpZ2h0PSJib2xkIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZmlsbD0iI2U2MWE3MyIgdGV4dC1hbmNob3I9Im1pZGRsZSI+SlI8L3RleHQ+PC9zdmc+">
-
-    <!-- Firebase SDKs for Real-Time Cloud Sync -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
     <style>
         :root {
@@ -39,22 +35,13 @@
         }
 
         .container {
-            max-width: 950px;
+            max-width: 920px;
             margin: 0 auto;
             background: #ffffff;
             padding: 20px;
             border-radius: 12px;
             box-shadow: 0 6px 20px rgba(7, 30, 72, 0.12);
             border-top: 5px solid var(--primary-navy);
-        }
-
-        /* Cloud Status Indicator */
-        .sync-status {
-            text-align: right;
-            font-size: 11px;
-            font-weight: 700;
-            margin-bottom: 5px;
-            color: #15803d;
         }
 
         /* Header Banner */
@@ -208,7 +195,7 @@
 
         .item-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(125px, 1fr));
             gap: 10px;
         }
 
@@ -489,6 +476,9 @@
         .badge-full { background: #dbeafe; color: #1e40af; border: 1px solid #3b82f6; }
 
         .folder-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
             background: var(--primary-navy);
             color: white;
             padding: 12px 15px;
@@ -496,9 +486,6 @@
             margin-bottom: 15px;
             font-size: 13px;
             border-left: 5px solid var(--accent-yellow);
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 8px;
         }
 
         .footer-credits {
@@ -528,11 +515,14 @@
         @media print {
             body { background: white; padding: 0; }
             .container { box-shadow: none; border: none; width: 100%; max-width: 100%; padding: 0; }
+            /* LOGO HIDDEN IN DATA ENTRY PRINT */
             body.printing-data-entry .header-banner { display: none !important; }
-            .nav-tabs, .item-box, .btn-add, .action-btns, .history-section, .delete-col, .logo-upload-btn, .item-manager-box, .upi-input-group, .party-folder-bar, .no-print, .sync-status { display: none !important; }
+
+            .nav-tabs, .item-box, .btn-add, .action-btns, .history-section, .delete-col, .logo-upload-btn, .item-manager-box, .upi-input-group, .party-folder-bar, .no-print { display: none !important; }
             input, select { border: none !important; background: transparent !important; -webkit-appearance: none; }
             th { background-color: #071e48 !important; color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .folder-stats { background-color: #071e48 !important; color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .payment-summary-section { border: 1px solid #ccc; }
             .footer-credits { border-top: 1px solid #ccc; font-size: 12px; }
 
             body.printing-all-parties #billingTab,
@@ -547,8 +537,6 @@
 </head>
 <body>
 <div class="container">
-    <div class="sync-status" id="syncStatus">☁️ Cloud Sync: Connecting...</div>
-
     <!-- Header Banner -->
     <div class="header-banner">
         <img id="bannerImg" src="logo.png" alt="Jay Ranjeet Graphic Design" onerror="showFallbackHeader()">
@@ -575,6 +563,7 @@
     <!-- TAB 1: BILLING APP                         -->
     <!-- ========================================== -->
     <div id="billingTab" class="tab-content active">
+        <!-- Bill Metadata -->
         <div class="meta-grid">
             <div class="form-group">
                 <label>Bill No. (Auto)</label>
@@ -594,6 +583,7 @@
             </div>
         </div>
 
+        <!-- Item List Manager Box -->
         <div class="item-manager-box" id="itemManagerBox">
             <h4>➕ Manage Options List</h4>
             <div class="item-manager-grid">
@@ -604,8 +594,9 @@
             <div class="item-tags" id="itemTagsContainer"></div>
         </div>
 
+        <!-- Bill Input Form -->
         <div class="item-box">
-            <div class="item-grid" style="grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));">
+            <div class="item-grid">
                 <div class="form-group">
                     <label>Item Selection</label>
                     <select id="itemSelect" onchange="checkOtherOption()"></select>
@@ -634,6 +625,7 @@
             <button class="btn-add" onclick="addItem()">+ Add Item To Bill</button>
         </div>
 
+        <!-- Items Table -->
         <div class="table-responsive">
             <table id="billTable">
                 <thead>
@@ -650,6 +642,7 @@
             </table>
         </div>
 
+        <!-- Payment Summary Section -->
         <div class="payment-summary-section">
             <div class="payment-grid">
                 <div class="summary-box grand-total">
@@ -676,6 +669,7 @@
             </div>
         </div>
 
+        <!-- Action Buttons -->
         <div class="action-btns">
             <button class="btn btn-save" onclick="saveBill()">💾 Save Bill</button>
             <button class="btn btn-print" onclick="generatePDF()">📄 Save PDF / Print</button>
@@ -683,6 +677,7 @@
             <button class="btn btn-history" onclick="toggleHistory()">📜 Old Bills Record</button>
         </div>
 
+        <!-- History Section -->
         <div class="history-section" id="historySection">
             <h3 style="color: var(--primary-navy); margin-bottom: 10px;">Old Bills Record</h3>
             <div class="table-responsive">
@@ -709,9 +704,10 @@
     <!-- TAB 2: DATA ENTRY (PRODUCTION & PDF)       -->
     <!-- ========================================== -->
     <div id="dataEntryTab" class="tab-content">
+        <!-- Party Folder Selection / Creation -->
         <div class="party-folder-bar">
             <div class="party-folder-header">
-                <h3>📁 Party Folder Selection (Cloud Synced)</h3>
+                <h3>📁 Party Folder Selection</h3>
                 <div style="display:flex; gap:8px; flex-wrap:wrap;">
                     <button class="btn-sm btn-pdf-party" style="padding:8px 14px; font-size:13px;" onclick="saveCurrentPartyPDF()">📄 Save Party PDF / Print</button>
                     <button class="btn-sm btn-edit-sm" style="padding:8px 14px; font-size:13px;" onclick="saveAllPartiesPDF()">📑 Save All Parties PDF</button>
@@ -727,37 +723,38 @@
             </div>
 
             <div class="new-party-box">
-                <input type="text" id="newPartyNameInput" placeholder="Nayi Party ka naam likhein (New Party Folder)..." onblur="capitalizeFirstLetter(this)" style="flex:1; padding:8px 10px; border:1px solid #cbd5e1; border-radius:6px; font-size:13px;">
+                <input type="text" id="newPartyNameInput" placeholder="Nayi Party ka naam likhein..." onblur="capitalizeFirstLetter(this)" style="flex:1; padding:8px 10px; border:1px solid #cbd5e1; border-radius:6px; font-size:13px;">
                 <button onclick="createNewPartyFolder()" style="background:var(--primary-pink); color:white; border:none; padding:8px 16px; border-radius:6px; font-weight:bold; cursor:pointer; font-size:13px;">+ Create Party Folder</button>
             </div>
         </div>
 
+        <!-- Folder Summary & Totals Bar -->
         <div class="folder-stats">
             <div>📂 Party: <strong id="activeFolderNameLabel" style="color:var(--accent-yellow);">General</strong></div>
-            <div>📦 Total Entries: <strong id="folderTotalEntries">0</strong></div>
-            <div>⚡ Half (Qty: <span id="halfQtyTotal">0</span> | Amt: ₹<span id="halfAmtTotal">0.00</span>)</div>
-            <div>🔷 Full (Qty: <span id="fullQtyTotal">0</span> | Amt: ₹<span id="fullAmtTotal">0.00</span>)</div>
-            <div>💰 Total Qty: <strong id="folderTotalQty">0</strong> | Total Amt: ₹<strong id="folderTotalAmt" style="color:var(--accent-yellow);">0.00</strong></div>
+            <div>👕 Half Qty: <strong id="halfQtyTotal">0</strong></div>
+            <div>👔 Full Qty: <strong id="fullQtyTotal">0</strong></div>
+            <div>💰 Total Amount: ₹ <strong id="overallAmountTotal" style="color:var(--accent-yellow);">0.00</strong></div>
         </div>
 
+        <!-- Data Entry Input Box (Instant Enter Submission) -->
         <div class="item-box" style="border-left: 4px solid var(--primary-pink);">
-            <h4 id="entryFormTitle" style="color:var(--primary-navy); margin-bottom:12px; font-size:15px;">➕ New Production / Lot Entry (Press Enter to Save)</h4>
+            <h4 id="entryFormTitle" style="color:var(--primary-navy); margin-bottom:12px; font-size:15px;">➕ New Production / Lot Entry</h4>
             <div class="item-grid">
                 <div class="form-group">
                     <label>Date</label>
-                    <input type="text" id="entryDate" onkeydown="handleEnterKey(event)">
+                    <input type="text" id="entryDate" onkeydown="handleFormEnter(event)">
                 </div>
                 <div class="form-group">
-                    <label>Lot No. (Auto +1)</label>
-                    <input type="number" id="entryLotNo" placeholder="e.g. 101" onkeydown="handleEnterKey(event)">
+                    <label>Lot Number (Auto +1)</label>
+                    <input type="number" id="entryLotNo" placeholder="e.g. 101" onkeydown="handleFormEnter(event)">
                 </div>
                 <div class="form-group">
                     <label>Quantity</label>
-                    <input type="number" id="entryQty" placeholder="Enter Qty" onkeydown="handleEnterKey(event)">
+                    <input type="number" id="entryQty" placeholder="Enter Qty" onkeydown="handleFormEnter(event)">
                 </div>
                 <div class="form-group">
-                    <label>Rate (₹)</label>
-                    <input type="number" step="0.01" id="entryRate" placeholder="Rate" onkeydown="handleEnterKey(event)">
+                    <label>Rate (₹) [Sticky]</label>
+                    <input type="number" id="entryRate" placeholder="Rate per pcs" oninput="saveStickyRate()" onkeydown="handleFormEnter(event)">
                 </div>
                 <div class="form-group">
                     <label>Shirt Type</label>
@@ -768,16 +765,17 @@
                 </div>
                 <div class="form-group">
                     <label>Karigar Name (Optional)</label>
-                    <input type="text" id="entryKarigar" list="karigarSuggestions" placeholder="Karigar Name" onblur="capitalizeFirstLetter(this)" onkeydown="handleEnterKey(event)">
+                    <input type="text" id="entryKarigar" list="karigarSuggestions" placeholder="Karigar Name" onblur="capitalizeFirstLetter(this)" onkeydown="handleFormEnter(event)">
                     <datalist id="karigarSuggestions"></datalist>
                 </div>
             </div>
             <div style="display:flex; gap:10px; margin-top:15px;">
-                <button class="btn-add" id="saveEntryBtn" style="margin-top:0;" onclick="saveDataEntry()">💾 Save Entry (Enter)</button>
+                <button class="btn-add" id="saveEntryBtn" style="margin-top:0;" onclick="saveDataEntry()">💾 Save Entry (Enter Key / Click)</button>
                 <button class="btn" id="cancelEditEntryBtn" style="display:none; background:#64748b; max-width:140px;" onclick="cancelEntryEdit()">Cancel</button>
             </div>
         </div>
 
+        <!-- Party Entries Table -->
         <div class="table-responsive">
             <table>
                 <thead>
@@ -786,7 +784,7 @@
                         <th>Lot No.</th>
                         <th>Quantity</th>
                         <th>Rate (₹)</th>
-                        <th>Total Amount (₹)</th>
+                        <th>Amount (₹)</th>
                         <th>Shirt Type</th>
                         <th>Karigar Name</th>
                         <th class="delete-col">Action</th>
@@ -797,8 +795,10 @@
         </div>
     </div>
 
+    <!-- Hidden Section Used Only When Printing All Parties Together -->
     <div id="allPartiesPrintArea"></div>
 
+    <!-- Footer Credits -->
     <div class="footer-credits">
         Developed & Managed by: <span>Sahil Vashishtha</span> | Contact: <span>7067842840 / 9111799751</span>
     </div>
@@ -806,37 +806,16 @@
 
 <script>
     // ==========================================
-    // FIREBASE CLOUD DATABASE CONFIGURATION
-    // ==========================================
-    const firebaseConfig = {
-        apiKey: "AIzaSyDummyKeyForDemoPurposesOnly12345",
-        authDomain: "jay-ranjeet-billing.firebaseapp.com",
-        databaseURL: "https://jay-ranjeet-default-rtdb.firebaseio.com/",
-        projectId: "jay-ranjeet-billing",
-        storageBucket: "jay-ranjeet-billing.appspot.com",
-        messagingSenderId: "1234567890",
-        appId: "1:1234567890:web:abcdef"
-    };
-
-    // Initialize Firebase
-    try {
-        firebase.initializeApp(firebaseConfig);
-        var db = firebase.database();
-    } catch (e) {
-        console.log("Firebase init note:", e);
-    }
-
-    let cloudPartyFolders = {};
-    let cloudMasterItems = [];
-    let cloudSavedBills = [];
-
-    // ==========================================
     // GLOBAL & BILLING VARIABLES
     // ==========================================
     let currentBillItems = [];
     let editingBillIndex = null;
     const defaultMasterItems = ["D cut bag", "Box bag", "W cut bag", "Loop Handle Bag", "Star flex", "Visiting Card", "Vinyl Print", "Bill Book"];
 
+    // ==========================================
+    // DATA ENTRY & PARTY FOLDER VARIABLES
+    // ==========================================
+    let partyFolders = {}; // { "Party Name": [ { id, date, lotNo, qty, rate, shirtType, karigar } ] }
     let activeParty = "General";
     let selectedShirtType = "Half"; 
     let editingEntryId = null;
@@ -846,72 +825,21 @@
         loadSavedLogo();
         setCurrentDate();
         generateBillNumber();
-        initCloudSync();
+        initMasterItems();
         loadSavedUpiId();
+        loadHistory();
+        updateQRCode();
+
+        // Initialize Data Entry Tab
+        initDataEntrySystem();
     };
 
-    // Real-time Listeners for Cloud Sync
-    function initCloudSync() {
-        if (typeof db === 'undefined') {
-            document.getElementById('syncStatus').innerText = "⚠️ Cloud Offline (Using Local)";
-            initMasterItemsLocal();
-            initDataEntryLocal();
-            loadHistoryLocal();
-            return;
-        }
-
-        document.getElementById('syncStatus').innerText = "☁️ Cloud Sync: Connected (Live)";
-
-        // 1. Sync Party Folders in Real-time
-        db.ref('jay_ranjeet/partyFolders').on('value', (snapshot) => {
-            const val = snapshot.val();
-            if (val) {
-                cloudPartyFolders = val;
-            } else {
-                cloudPartyFolders = { "General": [] };
-                db.ref('jay_ranjeet/partyFolders').set(cloudPartyFolders);
-            }
-            if (!cloudPartyFolders[activeParty]) {
-                activeParty = Object.keys(cloudPartyFolders)[0];
-            }
-            populatePartyDropdown();
-            renderPartyEntries();
-            updateNextLotNumber();
-            updateKarigarSuggestions();
-        });
-
-        // 2. Sync Master Items in Real-time
-        db.ref('jay_ranjeet/masterItems').on('value', (snapshot) => {
-            const val = snapshot.val();
-            if (val) {
-                cloudMasterItems = val;
-            } else {
-                cloudMasterItems = defaultMasterItems;
-                db.ref('jay_ranjeet/masterItems').set(cloudMasterItems);
-            }
-            populateDropdown(cloudMasterItems);
-            renderItemTags(cloudMasterItems);
-        });
-
-        // 3. Sync Saved Bills in Real-time
-        db.ref('jay_ranjeet/savedBills').on('value', (snapshot) => {
-            const val = snapshot.val();
-            cloudSavedBills = val ? val : [];
-            loadHistory();
-        });
-
-        const savedShirt = localStorage.getItem('jr_sticky_shirt_type') || 'Half';
-        selectShirtType(savedShirt, false);
-
-        const savedRate = localStorage.getItem('jr_sticky_rate') || '';
-        document.getElementById('entryRate').value = savedRate;
-    }
-
+    // Auto Capitalize First Letter of Each Word
     function capitalizeFirstLetter(inputElem) {
-        let val = inputElem.value;
-        if (val && val.length > 0) {
-            inputElem.value = val.charAt(0).toUpperCase() + val.slice(1);
-        }
+        if (!inputElem || !inputElem.value) return;
+        const words = inputElem.value.trim().split(/\s+/);
+        const capitalized = words.map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+        inputElem.value = capitalized;
     }
 
     function switchMainTab(tab) {
@@ -927,6 +855,7 @@
             document.getElementById('dataEntryTab').classList.add('active');
             document.getElementById('tabBtnDataEntry').classList.add('active');
             renderPartyEntries();
+            document.getElementById('entryQty').focus();
         }
     }
 
@@ -1004,10 +933,23 @@
         document.getElementById('entryDate').value = formatted;
     }
 
+    // ==========================================
+    // BILLING LOGIC
+    // ==========================================
     function generateBillNumber() {
         let lastNo = localStorage.getItem('lastBillNo') || 1000;
         let nextNo = parseInt(lastNo) + 1;
         document.getElementById('billNo').value = "JR-" + nextNo;
+    }
+
+    function initMasterItems() {
+        let items = JSON.parse(localStorage.getItem('masterItemList'));
+        if (!items || items.length === 0) {
+            items = defaultMasterItems;
+            localStorage.setItem('masterItemList', JSON.stringify(items));
+        }
+        populateDropdown(items);
+        renderItemTags(items);
     }
 
     function populateDropdown(items) {
@@ -1033,22 +975,20 @@
         const val = input.value.trim();
         if (!val) return alert("Please enter item name!");
 
-        let items = [...cloudMasterItems];
+        let items = JSON.parse(localStorage.getItem('masterItemList')) || [];
         if (!items.includes(val)) {
             items.push(val);
-            if (typeof db !== 'undefined') {
-                db.ref('jay_ranjeet/masterItems').set(items);
-            }
+            localStorage.setItem('masterItemList', JSON.stringify(items));
+            initMasterItems();
             input.value = '';
         }
     }
 
     function removeMasterItem(index) {
-        let items = [...cloudMasterItems];
+        let items = JSON.parse(localStorage.getItem('masterItemList')) || [];
         items.splice(index, 1);
-        if (typeof db !== 'undefined') {
-            db.ref('jay_ranjeet/masterItems').set(items);
-        }
+        localStorage.setItem('masterItemList', JSON.stringify(items));
+        initMasterItems();
     }
 
     function toggleItemManager() {
@@ -1148,12 +1088,10 @@
         let payAmount = balanceDue > 0 ? balanceDue : parseFloat(document.getElementById('grandTotal').innerText) || 0;
 
         if (upiId && payAmount > 0) {
-            const upiUrl = `upi://pay?pa=${upiId}&pn=JAY%20RANJEET&am=${payAmount.toFixed(2)}&cu=INR`;
-            qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(upiUrl)}`;
+            const upiUrl = `upi://pay?pa=${upiId}&pn=JAY%20RANJEET&am=${payAmount.toFixed(2)}&cu=INR`; qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(upiUrl)}`;
             document.getElementById('qrBox').style.display = 'block';
         } else {
-            const fallbackUrl = `upi://pay?pa=${upiId || 'pay'}&pn=JAY%20RANJEET`;
-            qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(fallbackUrl)}`;
+            const fallbackUrl = `upi://pay?pa=${upiId \vert{}\vert{} 'pay'}&pn=JAY\%20RANJEET`; qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(fallbackUrl)}`;
         }
     }
 
@@ -1168,7 +1106,7 @@
         const amountPaid = parseFloat(document.getElementById('amountPaid').value) || 0;
         const balanceDue = document.getElementById('balanceDue').innerText;
 
-        let savedBills = [...cloudSavedBills];
+        let savedBills = JSON.parse(localStorage.getItem('savedBills') || '[]');
         const billObj = { billNo, date, custName, custPhone, items: currentBillItems, grandTotal, amountPaid, balanceDue };
 
         if (editingBillIndex !== null) {
@@ -1182,9 +1120,8 @@
             alert("Bill Saved Successfully!");
         }
 
-        if (typeof db !== 'undefined') {
-            db.ref('jay_ranjeet/savedBills').set(savedBills);
-        }
+        localStorage.setItem('savedBills', JSON.stringify(savedBills));
+        loadHistory();
         resetForm();
     }
 
@@ -1223,8 +1160,9 @@
     function loadHistory() {
         const tbody = document.getElementById('historyBody');
         tbody.innerHTML = '';
+        let savedBills = JSON.parse(localStorage.getItem('savedBills') || '[]');
 
-        cloudSavedBills.forEach((bill, index) => {
+        savedBills.forEach((bill, index) => {
             tbody.innerHTML += `
                 <tr>
                     <td>${bill.billNo}</td>
@@ -1245,7 +1183,9 @@
     }
 
     function editHistoryBill(index) {
-        let bill = cloudSavedBills[index];
+        let savedBills = JSON.parse(localStorage.getItem('savedBills') || '[]');
+        let bill = savedBills[index];
+
         editingBillIndex = index;
         document.getElementById('billNo').value = bill.billNo;
         document.getElementById('billDate').value = bill.date;
@@ -1264,26 +1204,55 @@
 
     function deleteHistoryBill(index) {
         if (confirm("Are you sure you want to delete this bill record?")) {
-            cloudSavedBills.splice(index, 1);
-            if (typeof db !== 'undefined') {
-                db.ref('jay_ranjeet/savedBills').set(cloudSavedBills);
-            }
+            let savedBills = JSON.parse(localStorage.getItem('savedBills') || '[]');
+            savedBills.splice(index, 1);
+            localStorage.setItem('savedBills', JSON.stringify(savedBills));
             loadHistory();
         }
     }
 
     // ==========================================
-    // CLOUD DATA ENTRY & PARTY FOLDER LOGIC
+    // DATA ENTRY & PARTY FOLDER SYSTEM LOGIC
     // ==========================================
+    function initDataEntrySystem() {
+        const storedFolders = localStorage.getItem('jr_party_folders');
+        if (storedFolders) {
+            partyFolders = JSON.parse(storedFolders);
+        }
+        if (Object.keys(partyFolders).length === 0) {
+            partyFolders["General"] = [];
+            savePartyFoldersToStorage();
+        }
+
+        const savedActiveParty = localStorage.getItem('jr_active_party');
+        if (savedActiveParty && partyFolders[savedActiveParty]) {
+            activeParty = savedActiveParty;
+        } else {
+            activeParty = Object.keys(partyFolders)[0];
+        }
+
+        // Restore sticky Shirt Type & Sticky Rate
+        const savedShirt = localStorage.getItem('jr_sticky_shirt_type') || 'Half';
+        selectShirtType(savedShirt, false);
+
+        const savedRate = localStorage.getItem('jr_sticky_rate') || '';
+        document.getElementById('entryRate').value = savedRate;
+
+        populatePartyDropdown();
+        renderPartyEntries();
+        updateNextLotNumber();
+        updateKarigarSuggestions();
+    }
+
+    function savePartyFoldersToStorage() {
+        localStorage.setItem('jr_party_folders', JSON.stringify(partyFolders));
+    }
+
     function populatePartyDropdown() {
         const select = document.getElementById('partyFolderSelect');
         select.innerHTML = '';
-        if (!cloudPartyFolders[activeParty]) {
-            activeParty = Object.keys(cloudPartyFolders)[0] || "General";
-        }
-        Object.keys(cloudPartyFolders).forEach(partyName => {
-            const entries = cloudPartyFolders[partyName] || [];
-            const count = entries.length;
+        Object.keys(partyFolders).forEach(partyName => {
+            const count = partyFolders[partyName].length;
             const selected = partyName === activeParty ? 'selected' : '';
             select.innerHTML += `<option value="${partyName}" ${selected}>📁 ${partyName} (${count} entries)</option>`;
         });
@@ -1295,16 +1264,15 @@
         const name = input.value.trim();
         if (!name) return alert("Kripya Party ka naam likhein!");
 
-        if (cloudPartyFolders[name]) {
-            alert("Yeh Party Folder pehle se bana hua hai!");
+        if (partyFolders[name]) {
+            alert("Yeh Party Folder pehle se bana hua hai! Use select kar diya gaya hai.");
         } else {
-            cloudPartyFolders[name] = [];
-            if (typeof db !== 'undefined') {
-                db.ref('jay_ranjeet/partyFolders').set(cloudPartyFolders);
-            }
+            partyFolders[name] = [];
+            savePartyFoldersToStorage();
         }
 
         activeParty = name;
+        localStorage.setItem('jr_active_party', activeParty);
         input.value = '';
         cancelEntryEdit();
         populatePartyDropdown();
@@ -1314,6 +1282,7 @@
 
     function onPartyChange() {
         activeParty = document.getElementById('partyFolderSelect').value;
+        localStorage.setItem('jr_active_party', activeParty);
         document.getElementById('activeFolderNameLabel').innerText = activeParty;
         cancelEntryEdit();
         renderPartyEntries();
@@ -1321,16 +1290,15 @@
     }
 
     function deleteCurrentPartyFolder() {
-        const folderNames = Object.keys(cloudPartyFolders);
+        const folderNames = Object.keys(partyFolders);
         if (folderNames.length <= 1) {
             return alert("Kam se kam ek Party Folder hona zaroori hai.");
         }
         if (confirm(`Kya aap "${activeParty}" folder aur uska saara data delete karna chahte hain?`)) {
-            delete cloudPartyFolders[activeParty];
-            if (typeof db !== 'undefined') {
-                db.ref('jay_ranjeet/partyFolders').set(cloudPartyFolders);
-            }
-            activeParty = Object.keys(cloudPartyFolders)[0];
+            delete partyFolders[activeParty];
+            savePartyFoldersToStorage();
+            activeParty = Object.keys(partyFolders)[0];
+            localStorage.setItem('jr_active_party', activeParty);
             populatePartyDropdown();
             renderPartyEntries();
             updateNextLotNumber();
@@ -1353,10 +1321,15 @@
         }
     }
 
+    function saveStickyRate() {
+        const rateVal = document.getElementById('entryRate').value;
+        localStorage.setItem('jr_sticky_rate', rateVal);
+    }
+
     function updateNextLotNumber() {
         if (editingEntryId !== null) return;
 
-        const entries = cloudPartyFolders[activeParty] || [];
+        const entries = partyFolders[activeParty] || [];
         let maxLot = 0;
 
         entries.forEach(item => {
@@ -1370,7 +1343,8 @@
         document.getElementById('entryLotNo').value = nextLot;
     }
 
-    function handleEnterKey(event) {
+    // Instant Enter Key Support
+    function handleFormEnter(event) {
         if (event.key === 'Enter') {
             event.preventDefault();
             saveDataEntry();
@@ -1381,60 +1355,59 @@
         const date = document.getElementById('entryDate').value.trim() || getTodayFormatted();
         const lotNo = document.getElementById('entryLotNo').value.trim();
         const qty = document.getElementById('entryQty').value.trim();
-        const rate = document.getElementById('entryRate').value.trim();
+        const rate = document.getElementById('entryRate').value.trim() || 0;
         const karigar = document.getElementById('entryKarigar').value.trim() || '-';
 
         if (!lotNo) return alert("Lot Number daalna zaroori hai!");
         if (!qty || parseFloat(qty) <= 0) return alert("Sahi Quantity daalein!");
 
-        if (rate) {
-            localStorage.setItem('jr_sticky_rate', rate);
+        if (!partyFolders[activeParty]) {
+            partyFolders[activeParty] = [];
         }
 
-        const parsedRate = parseFloat(rate) || 0;
-        const parsedQty = parseFloat(qty) || 0;
-        const totalAmount = parsedQty * parsedRate;
-
-        if (!cloudPartyFolders[activeParty]) {
-            cloudPartyFolders[activeParty] = [];
-        }
+        const numericQty = parseFloat(qty) || 0;
+        const numericRate = parseFloat(rate) || 0;
+        const amount = numericQty * numericRate;
 
         if (editingEntryId !== null) {
-            const idx = cloudPartyFolders[activeParty].findIndex(e => e.id === editingEntryId);
+            const idx = partyFolders[activeParty].findIndex(e => e.id === editingEntryId);
             if (idx !== -1) {
-                cloudPartyFolders[activeParty][idx] = {
+                partyFolders[activeParty][idx] = {
                     id: editingEntryId,
                     date,
                     lotNo: parseInt(lotNo) || lotNo,
-                    qty: parsedQty,
-                    rate: parsedRate,
-                    totalAmount,
+                    qty: numericQty,
+                    rate: numericRate,
+                    amount: amount,
                     shirtType: selectedShirtType,
                     karigar
                 };
             }
             editingEntryId = null;
-            document.getElementById('entryFormTitle').innerText = "➕ New Production / Lot Entry (Press Enter to Save)";
-            document.getElementById('saveEntryBtn').innerText = "💾 Save Entry (Enter)";
+            document.getElementById('entryFormTitle').innerText = "➕ New Production / Lot Entry";
+            document.getElementById('saveEntryBtn').innerText = "💾 Save Entry (Enter Key / Click)";
             document.getElementById('cancelEditEntryBtn').style.display = "none";
         } else {
-            cloudPartyFolders[activeParty].push({
+            partyFolders[activeParty].push({
                 id: Date.now(),
                 date,
                 lotNo: parseInt(lotNo) || lotNo,
-                qty: parsedQty,
-                rate: parsedRate,
-                totalAmount,
+                qty: numericQty,
+                rate: numericRate,
+                amount: amount,
                 shirtType: selectedShirtType,
                 karigar
             });
         }
 
-        if (typeof db !== 'undefined') {
-            db.ref('jay_ranjeet/partyFolders').set(cloudPartyFolders);
-        }
+        savePartyFoldersToStorage();
+        populatePartyDropdown();
+        renderPartyEntries();
+        updateKarigarSuggestions();
 
+        // Reset Qty & Auto-Increment Lot Number (+1), Keep Rate, Shirt Type & ready for new name
         document.getElementById('entryQty').value = '';
+        document.getElementById('entryKarigar').value = '';
         updateNextLotNumber();
         document.getElementById('entryQty').focus();
     }
@@ -1443,27 +1416,21 @@
         const tbody = document.getElementById('partyEntriesBody');
         tbody.innerHTML = '';
 
-        const entries = cloudPartyFolders[activeParty] || [];
-        let totalQty = 0;
-        let totalAmt = 0;
-        let halfQty = 0;
-        let halfAmt = 0;
-        let fullQty = 0;
-        let fullAmt = 0;
+        const entries = partyFolders[activeParty] || [];
+        let halfTotalQty = 0;
+        let fullTotalQty = 0;
+        let grandAmountTotal = 0;
 
         entries.forEach(entry => {
             const qty = parseFloat(entry.qty) || 0;
-            const amt = parseFloat(entry.totalAmount) || (qty * (parseFloat(entry.rate) || 0));
-
-            totalQty += qty;
-            totalAmt += amt;
+            const rate = parseFloat(entry.rate) || 0;
+            const amount = entry.amount !== undefined ? entry.amount : (qty * rate);
+            grandAmountTotal += amount;
 
             if (entry.shirtType === 'Half') {
-                halfQty += qty;
-                halfAmt += amt;
+                halfTotalQty += qty;
             } else {
-                fullQty += qty;
-                fullAmt += amt;
+                fullTotalQty += qty;
             }
 
             const badgeClass = entry.shirtType === 'Half' ? 'badge-half' : 'badge-full';
@@ -1473,177 +1440,4 @@
                     <td>${entry.date}</td>
                     <td><strong>#${entry.lotNo}</strong></td>
                     <td><strong>${qty}</strong></td>
-                    <td>₹${(entry.rate || 0).toFixed(2)}</td>
-                    <td><strong>₹${amt.toFixed(2)}</strong></td>
-                    <td><span class="badge-shirt ${badgeClass}">${entry.shirtType}</span></td>
-                    <td>${entry.karigar}</td>
-                    <td class="delete-col">
-                        <button class="btn-sm btn-edit-sm" onclick="editDataEntry(${entry.id})">✏️ Edit</button>
-                        <button class="btn-sm btn-delete-sm" onclick="deleteDataEntry(${entry.id})">X</button>
-                    </td>
-                </tr>
-            `;
-        });
-
-        document.getElementById('folderTotalEntries').innerText = entries.length;
-        document.getElementById('folderTotalQty').innerText = totalQty;
-        document.getElementById('folderTotalAmt').innerText = totalAmt.toFixed(2);
-        
-        document.getElementById('halfQtyTotal').innerText = halfQty;
-        document.getElementById('halfAmtTotal').innerText = halfAmt.toFixed(2);
-        document.getElementById('fullQtyTotal').innerText = fullQty;
-        document.getElementById('fullAmtTotal').innerText = fullAmt.toFixed(2);
-    }
-
-    function editDataEntry(id) {
-        const entries = cloudPartyFolders[activeParty] || [];
-        const entry = entries.find(e => e.id === id);
-        if (!entry) return;
-
-        editingEntryId = id;
-        document.getElementById('entryDate').value = entry.date;
-        document.getElementById('entryLotNo').value = entry.lotNo;
-        document.getElementById('entryQty').value = entry.qty;
-        document.getElementById('entryRate').value = entry.rate || '';
-        document.getElementById('entryKarigar').value = entry.karigar === '-' ? '' : entry.karigar;
-        selectShirtType(entry.shirtType, false);
-
-        document.getElementById('entryFormTitle').innerText = `✏️ Editing Lot #${entry.lotNo} (${activeParty})`;
-        document.getElementById('saveEntryBtn').innerText = "✅ Update Entry";
-        document.getElementById('cancelEditEntryBtn').style.display = "inline-block";
-        window.scrollTo({ top: 150, behavior: 'smooth' });
-    }
-
-    function cancelEntryEdit() {
-        editingEntryId = null;
-        document.getElementById('entryDate').value = getTodayFormatted();
-        document.getElementById('entryQty').value = '';
-        document.getElementById('entryKarigar').value = '';
-        document.getElementById('entryFormTitle').innerText = "➕ New Production / Lot Entry (Press Enter to Save)";
-        document.getElementById('saveEntryBtn').innerText = "💾 Save Entry (Enter)";
-        document.getElementById('cancelEditEntryBtn').style.display = "none";
-
-        const savedShirt = localStorage.getItem('jr_sticky_shirt_type') || 'Half';
-        selectShirtType(savedShirt, false);
-        updateNextLotNumber();
-    }
-
-    function deleteDataEntry(id) {
-        if (confirm("Kya aap is entry ko delete karna chahte hain?")) {
-            cloudPartyFolders[activeParty] = cloudPartyFolders[activeParty].filter(e => e.id !== id);
-            if (typeof db !== 'undefined') {
-                db.ref('jay_ranjeet/partyFolders').set(cloudPartyFolders);
-            }
-            updateNextLotNumber();
-        }
-    }
-
-    function updateKarigarSuggestions() {
-        const datalist = document.getElementById('karigarSuggestions');
-        const names = new Set();
-        Object.values(cloudPartyFolders).forEach(list => {
-            list.forEach(item => {
-                if (item.karigar && item.karigar !== '-') names.add(item.karigar);
-            });
-        });
-        datalist.innerHTML = '';
-        names.forEach(name => {
-            datalist.innerHTML += `<option value="${name}">`;
-        });
-    }
-
-    function saveCurrentPartyPDF() {
-        const entries = cloudPartyFolders[activeParty] || [];
-        if (entries.length === 0) {
-            return alert(`"${activeParty}" folder mein abhi koi entry nahi hai!`);
-        }
-
-        const cleanPartyName = activeParty.replace(/[^a-zA-Z0-9_-]/g, '_');
-        const originalTitle = document.title;
-        document.title = `${cleanPartyName}_Production_Report`;
-        document.body.classList.add('printing-data-entry');
-
-        window.print();
-
-        setTimeout(() => {
-            document.body.classList.remove('printing-data-entry');
-            document.title = originalTitle;
-        }, 1000);
-    }
-
-    function saveAllPartiesPDF() {
-        const printArea = document.getElementById('allPartiesPrintArea');
-        printArea.innerHTML = '';
-        let hasAnyData = false;
-
-        Object.keys(cloudPartyFolders).forEach(partyName => {
-            const entries = cloudPartyFolders[partyName];
-            if (entries && entries.length > 0) {
-                hasAnyData = true;
-                let totalQty = 0;
-                let totalAmt = 0;
-                let rowsHtml = '';
-
-                entries.forEach(e => {
-                    const qty = parseFloat(e.qty) || 0;
-                    const amt = parseFloat(e.totalAmount) || (qty * (parseFloat(e.rate) || 0));
-                    totalQty += qty;
-                    totalAmt += amt;
-
-                    rowsHtml += `
-                        <tr>
-                            <td>${e.date}</td>
-                            <td><strong>#${e.lotNo}</strong></td>
-                            <td><strong>${qty}</strong></td>
-                            <td>₹${(e.rate || 0).toFixed(2)}</td>
-                            <td><strong>₹${amt.toFixed(2)}</strong></td>
-                            <td>${e.shirtType}</td>
-                            <td>${e.karigar}</td>
-                        </tr>
-                    `;
-                });
-
-                printArea.innerHTML += `
-                    <div style="margin-bottom: 30px; page-break-inside: avoid;">
-                        <div class="folder-stats" style="margin-bottom: 8px;">
-                            <div>📂 Party: <strong style="color:#f9b208;">${partyName}</strong></div>
-                            <div>📦 Entries: <strong>${entries.length}</strong></div>
-                            <div>💰 Total Qty: <strong>${totalQty}</strong> | Total Amt: <strong>₹${totalAmt.toFixed(2)}</strong></div>
-                        </div>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Lot No.</th>
-                                    <th>Quantity</th>
-                                    <th>Rate (₹)</th>
-                                    <th>Total Amount (₹)</th>
-                                    <th>Shirt Type</th>
-                                    <th>Karigar Name</th>
-                                </tr>
-                            </thead>
-                            <tbody>${rowsHtml}</tbody>
-                        </table>
-                    </div>
-                `;
-            }
-        });
-
-        if (!hasAnyData) {
-            return alert("Abhi kisi bhi Party folder mein koi data nahi hai!");
-        }
-
-        const originalTitle = document.title;
-        document.title = `Jay_Ranjeet_All_Parties_Report`;
-        document.body.classList.add('printing-all-parties');
-
-        window.print();
-
-        setTimeout(() => {
-            document.body.classList.remove('printing-all-parties');
-            document.title = originalTitle;
-        }, 1000);
-    }
-</script>
-</body>
-</html>
+                    <td>₹${rate.toFixed(2

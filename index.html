@@ -195,7 +195,7 @@
 
         .item-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
             gap: 10px;
         }
 
@@ -476,12 +476,12 @@
         .badge-full { background: #dbeafe; color: #1e40af; border: 1px solid #3b82f6; }
 
         .folder-stats {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
             background: var(--primary-navy);
             color: white;
-            padding: 10px 15px;
+            padding: 12px 15px;
             border-radius: 6px;
             margin-bottom: 15px;
             font-size: 13px;
@@ -516,14 +516,21 @@
         @media print {
             body { background: white; padding: 0; }
             .container { box-shadow: none; border: none; width: 100%; max-width: 100%; padding: 0; }
-            .nav-tabs, .item-box, .btn-add, .action-btns, .history-section, .delete-col, .logo-upload-btn, .item-manager-box, .upi-input-group, .party-folder-bar, .no-print { display: none !important; }
+            .nav-tabs, .item-box, .btn-add, .action-btns, .history-section, .delete-col, .logo-upload-btn, .item-manager-box, .upi-input-group, .party-folder-bar, .no-print, .header-banner { display: none !important; }
             input, select { border: none !important; background: transparent !important; -webkit-appearance: none; }
             th { background-color: #071e48 !important; color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .folder-stats { background-color: #071e48 !important; color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .payment-summary-section { border: 1px solid #ccc; }
             .footer-credits { border-top: 1px solid #ccc; font-size: 12px; }
 
-            /* When printing All Parties PDF */
+            /* When printing Data Entry Report, show report title */
+            .print-report-header {
+                display: block !important;
+                text-align: center;
+                margin-bottom: 15px;
+                border-bottom: 2px solid #071e48;
+                padding-bottom: 8px;
+            }
+
             body.printing-all-parties #billingTab,
             body.printing-all-parties #dataEntryTab {
                 display: none !important;
@@ -532,11 +539,15 @@
                 display: block !important;
             }
         }
+
+        .print-report-header {
+            display: none;
+        }
     </style>
 </head>
 <body>
 <div class="container">
-    <!-- Header Banner -->
+    <!-- Header Banner (Only for Billing & Normal View) -->
     <div class="header-banner">
         <img id="bannerImg" src="logo.png" alt="Jay Ranjeet Graphic Design" onerror="showFallbackHeader()">
         
@@ -555,7 +566,7 @@
     <!-- Main Navigation Tabs -->
     <div class="nav-tabs">
         <button class="nav-tab active" id="tabBtnBilling" onclick="switchMainTab('billing')">🧾 Billing & Invoice</button>
-        <button class="nav-tab" id="tabBtnDataEntry" onclick="switchMainTab('dataEntry')">📋 Data Entry (Party Folder & PDF)</button>
+        <button class="nav-tab" id="tabBtnDataEntry" onclick="switchMainTab('dataEntry')">📋 Data Entry (Production Report)</button>
     </div>
 
     <!-- ========================================== -->
@@ -700,15 +711,21 @@
     </div>
 
     <!-- ========================================== -->
-    <!-- TAB 2: DATA ENTRY (PARTY FOLDER & PDF)     -->
+    <!-- TAB 2: DATA ENTRY (PRODUCTION REPORT)      -->
     <!-- ========================================== -->
     <div id="dataEntryTab" class="tab-content">
+        <!-- Print Header Title (Appears only when saving PDF) -->
+        <div class="print-report-header">
+            <h2 style="color:#071e48; font-size:22px;">JAY RANJEET - PRODUCTION REPORT</h2>
+            <p style="font-size:13px; color:#555;">Non Woven Carry Bag Printing & Graphic Design</p>
+        </div>
+
         <!-- Party Folder Selection / Creation -->
         <div class="party-folder-bar">
             <div class="party-folder-header">
                 <h3>📁 Party Folder Selection</h3>
                 <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                    <button class="btn-sm btn-pdf-party" style="padding:8px 14px; font-size:13px;" onclick="saveCurrentPartyPDF()">📄 Save Party PDF / Print</button>
+                    <button class="btn-sm btn-pdf-party" style="padding:8px 14px; font-size:13px;" onclick="saveCurrentPartyPDF()">📄 Save Party PDF</button>
                     <button class="btn-sm btn-edit-sm" style="padding:8px 14px; font-size:13px;" onclick="saveAllPartiesPDF()">📑 Save All Parties PDF</button>
                 </div>
             </div>
@@ -722,50 +739,55 @@
             </div>
 
             <div class="new-party-box">
-                <input type="text" id="newPartyNameInput" placeholder="Nayi Party ka naam likhein (New Party Folder)..." style="flex:1; padding:8px 10px; border:1px solid #cbd5e1; border-radius:6px; font-size:13px;">
+                <input type="text" id="newPartyNameInput" placeholder="Nayi Party ka naam likhein (New Party Folder)..." style="flex:1; padding:8px 10px; border:1px solid #cbd5e1; border-radius:6px; font-size:13px;" onkeydown="if(event.key==='Enter') createNewPartyFolder()">
                 <button onclick="createNewPartyFolder()" style="background:var(--primary-pink); color:white; border:none; padding:8px 16px; border-radius:6px; font-weight:bold; cursor:pointer; font-size:13px;">+ Create Party Folder</button>
             </div>
         </div>
 
-        <!-- Folder Summary Bar (Visible in PDF too) -->
+        <!-- Folder Summary Bar (Includes Half/Full totals) -->
         <div class="folder-stats">
-            <div>📂 Party Name: <strong id="activeFolderNameLabel" style="color:var(--accent-yellow);">General</strong></div>
-            <div>📦 Total Entries: <strong id="folderTotalEntries">0</strong></div>
-            <div>🔢 Total Quantity: <strong id="folderTotalQty">0</strong></div>
-            <div>📅 Report Date: <strong id="folderReportDate"></strong></div>
+            <div>📂 Party: <strong id="activeFolderNameLabel" style="color:var(--accent-yellow);">General</strong></div>
+            <div>📦 Entries: <strong id="folderTotalEntries">0</strong></div>
+            <div>⚡ Half Total: <strong id="folderHalfQty">0</strong></div>
+            <div>⚡ Full Total: <strong id="folderFullQty">0</strong></div>
+            <div>🔢 Total Qty: <strong id="folderTotalQty">0</strong></div>
         </div>
 
         <!-- Data Entry Input Box -->
         <div class="item-box" style="border-left: 4px solid var(--primary-pink);">
-            <h4 id="entryFormTitle" style="color:var(--primary-navy); margin-bottom:12px; font-size:15px;">➕ New Production / Lot Entry</h4>
+            <h4 id="entryFormTitle" style="color:var(--primary-navy); margin-bottom:12px; font-size:15px;">➕ New Production / Lot Entry (Press Enter to Save)</h4>
             <div class="item-grid">
                 <div class="form-group">
                     <label>Date</label>
-                    <input type="text" id="entryDate">
+                    <input type="text" id="entryDate" onkeydown="handleEnter(event)">
                 </div>
                 <div class="form-group">
                     <label>Lot Number (Auto +1)</label>
-                    <input type="number" id="entryLotNo" placeholder="e.g. 101">
+                    <input type="number" id="entryLotNo" placeholder="e.g. 101" onkeydown="handleEnter(event)">
                 </div>
                 <div class="form-group">
                     <label>Quantity</label>
-                    <input type="number" id="entryQty" placeholder="Enter Qty">
+                    <input type="number" id="entryQty" placeholder="Enter Qty" onkeydown="handleEnter(event)">
                 </div>
                 <div class="form-group">
-                    <label>Shirt Type (Auto-Remembers)</label>
+                    <label>Rate (₹)</label>
+                    <input type="number" id="entryRate" placeholder="0.00" onkeydown="handleEnter(event)">
+                </div>
+                <div class="form-group">
+                    <label>Shirt Type (Sticky)</label>
                     <div class="shirt-toggle-group">
                         <div class="shirt-option selected" id="optHalf" onclick="selectShirtType('Half')">Half</div>
                         <div class="shirt-option" id="optFull" onclick="selectShirtType('Full')">Full</div>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label>Karigar Name</label>
-                    <input type="text" id="entryKarigar" list="karigarSuggestions" placeholder="Karigar Name">
+                    <label>Karigar Name (Optional)</label>
+                    <input type="text" id="entryKarigar" list="karigarSuggestions" placeholder="Optional" onkeydown="handleEnter(event)">
                     <datalist id="karigarSuggestions"></datalist>
                 </div>
             </div>
             <div style="display:flex; gap:10px; margin-top:15px;">
-                <button class="btn-add" id="saveEntryBtn" style="margin-top:0;" onclick="saveDataEntry()">💾 Save Entry to Party Folder</button>
+                <button class="btn-add" id="saveEntryBtn" style="margin-top:0;" onclick="saveDataEntry()">💾 Save Entry (Enter)</button>
                 <button class="btn" id="cancelEditEntryBtn" style="display:none; background:#64748b; max-width:140px;" onclick="cancelEntryEdit()">Cancel</button>
             </div>
         </div>
@@ -778,6 +800,7 @@
                         <th>Date</th>
                         <th>Lot No.</th>
                         <th>Quantity</th>
+                        <th>Rate (₹)</th>
                         <th>Shirt Type</th>
                         <th>Karigar Name</th>
                         <th class="delete-col">Action</th>
@@ -808,9 +831,9 @@
     // ==========================================
     // DATA ENTRY & PARTY FOLDER VARIABLES
     // ==========================================
-    let partyFolders = {}; // { "Party Name": [ { id, date, lotNo, qty, shirtType, karigar } ] }
+    let partyFolders = {}; // { "Party Name": [ { id, date, lotNo, qty, rate, shirtType, karigar } ] }
     let activeParty = "General";
-    let selectedShirtType = "Half"; // Sticky state: remains what user selects
+    let selectedShirtType = "Half"; // Sticky state
     let editingEntryId = null;
 
     window.onload = function() {
@@ -915,7 +938,6 @@
         const formatted = getTodayFormatted();
         document.getElementById('billDate').value = formatted;
         document.getElementById('entryDate').value = formatted;
-        document.getElementById('folderReportDate').innerText = formatted;
     }
 
     // ==========================================
@@ -1218,9 +1240,12 @@
             activeParty = Object.keys(partyFolders)[0];
         }
 
-        // Restore sticky Shirt Type (Half or Full)
+        // Restore sticky Shirt Type & Rate
         const savedShirt = localStorage.getItem('jr_sticky_shirt_type') || 'Half';
         selectShirtType(savedShirt, false);
+
+        const savedRate = localStorage.getItem('jr_sticky_rate') || '';
+        document.getElementById('entryRate').value = savedRate;
 
         populatePartyDropdown();
         renderPartyEntries();
@@ -1289,7 +1314,6 @@
         }
     }
 
-    // Sticky Half / Full Shirt Selection
     function selectShirtType(type, savePref = true) {
         selectedShirtType = type;
         document.getElementById('optHalf').classList.remove('selected');
@@ -1306,7 +1330,6 @@
         }
     }
 
-    // Automatic +1 Lot Number Calculation
     function updateNextLotNumber() {
         if (editingEntryId !== null) return;
 
@@ -1324,15 +1347,25 @@
         document.getElementById('entryLotNo').value = nextLot;
     }
 
+    function handleEnter(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            saveDataEntry();
+        }
+    }
+
     function saveDataEntry() {
         const date = document.getElementById('entryDate').value.trim() || getTodayFormatted();
         const lotNo = document.getElementById('entryLotNo').value.trim();
         const qty = document.getElementById('entryQty').value.trim();
-        const karigar = document.getElementById('entryKarigar').value.trim();
+        const rate = document.getElementById('entryRate').value.trim() || '0';
+        const karigar = document.getElementById('entryKarigar').value.trim() || '-';
 
         if (!lotNo) return alert("Lot Number daalna zaroori hai!");
         if (!qty || parseFloat(qty) <= 0) return alert("Sahi Quantity daalein!");
-        if (!karigar) return alert("Karigar ka naam daalein!");
+
+        // Save rate to sticky memory
+        localStorage.setItem('jr_sticky_rate', rate);
 
         if (!partyFolders[activeParty]) {
             partyFolders[activeParty] = [];
@@ -1346,13 +1379,14 @@
                     date,
                     lotNo: parseInt(lotNo) || lotNo,
                     qty: parseFloat(qty),
+                    rate: parseFloat(rate),
                     shirtType: selectedShirtType,
                     karigar
                 };
             }
             editingEntryId = null;
-            document.getElementById('entryFormTitle').innerText = "➕ New Production / Lot Entry";
-            document.getElementById('saveEntryBtn').innerText = "💾 Save Entry to Party Folder";
+            document.getElementById('entryFormTitle').innerText = "➕ New Production / Lot Entry (Press Enter to Save)";
+            document.getElementById('saveEntryBtn').innerText = "💾 Save Entry (Enter)";
             document.getElementById('cancelEditEntryBtn').style.display = "none";
         } else {
             partyFolders[activeParty].push({
@@ -1360,6 +1394,7 @@
                 date,
                 lotNo: parseInt(lotNo) || lotNo,
                 qty: parseFloat(qty),
+                rate: parseFloat(rate),
                 shirtType: selectedShirtType,
                 karigar
             });
@@ -1370,6 +1405,7 @@
         renderPartyEntries();
         updateKarigarSuggestions();
 
+        // Reset Qty & Auto-Increment Lot Number (+1), Keep Rate & Shirt Type
         document.getElementById('entryQty').value = '';
         updateNextLotNumber();
         document.getElementById('entryQty').focus();
@@ -1381,9 +1417,18 @@
 
         const entries = partyFolders[activeParty] || [];
         let totalQty = 0;
+        let halfQty = 0;
+        let fullQty = 0;
 
         entries.forEach(entry => {
-            totalQty += parseFloat(entry.qty) || 0;
+            const q = parseFloat(entry.qty) || 0;
+            totalQty += q;
+            if (entry.shirtType === 'Half') {
+                halfQty += q;
+            } else {
+                fullQty += q;
+            }
+
             const badgeClass = entry.shirtType === 'Half' ? 'badge-half' : 'badge-full';
 
             tbody.innerHTML += `
@@ -1391,6 +1436,7 @@
                     <td>${entry.date}</td>
                     <td><strong>#${entry.lotNo}</strong></td>
                     <td><strong>${entry.qty}</strong></td>
+                    <td>₹${entry.rate || '0'}</td>
                     <td><span class="badge-shirt ${badgeClass}">${entry.shirtType}</span></td>
                     <td>${entry.karigar}</td>
                     <td class="delete-col">
@@ -1402,6 +1448,8 @@
         });
 
         document.getElementById('folderTotalEntries').innerText = entries.length;
+        document.getElementById('folderHalfQty').innerText = halfQty;
+        document.getElementById('folderFullQty').innerText = fullQty;
         document.getElementById('folderTotalQty').innerText = totalQty;
     }
 
@@ -1414,7 +1462,8 @@
         document.getElementById('entryDate').value = entry.date;
         document.getElementById('entryLotNo').value = entry.lotNo;
         document.getElementById('entryQty').value = entry.qty;
-        document.getElementById('entryKarigar').value = entry.karigar;
+        document.getElementById('entryRate').value = entry.rate || '';
+        document.getElementById('entryKarigar').value = entry.karigar === '-' ? '' : entry.karigar;
         selectShirtType(entry.shirtType, false);
 
         document.getElementById('entryFormTitle').innerText = `✏️ Editing Lot #${entry.lotNo} (${activeParty})`;
@@ -1427,12 +1476,15 @@
         editingEntryId = null;
         document.getElementById('entryDate').value = getTodayFormatted();
         document.getElementById('entryQty').value = '';
-        document.getElementById('entryFormTitle').innerText = "➕ New Production / Lot Entry";
-        document.getElementById('saveEntryBtn').innerText = "💾 Save Entry to Party Folder";
+        document.getElementById('entryKarigar').value = '';
+        document.getElementById('entryFormTitle').innerText = "➕ New Production / Lot Entry (Press Enter to Save)";
+        document.getElementById('saveEntryBtn').innerText = "💾 Save Entry (Enter)";
         document.getElementById('cancelEditEntryBtn').style.display = "none";
 
         const savedShirt = localStorage.getItem('jr_sticky_shirt_type') || 'Half';
         selectShirtType(savedShirt, false);
+        const savedRate = localStorage.getItem('jr_sticky_rate') || '';
+        document.getElementById('entryRate').value = savedRate;
         updateNextLotNumber();
     }
 
@@ -1451,7 +1503,7 @@
         const names = new Set();
         Object.values(partyFolders).forEach(list => {
             list.forEach(item => {
-                if (item.karigar) names.add(item.karigar);
+                if (item.karigar && item.karigar !== '-') names.add(item.karigar);
             });
         });
         datalist.innerHTML = '';
@@ -1490,15 +1542,22 @@
             if (entries && entries.length > 0) {
                 hasAnyData = true;
                 let totalQty = 0;
+                let halfQty = 0;
+                let fullQty = 0;
                 let rowsHtml = '';
 
                 entries.forEach(e => {
-                    totalQty += parseFloat(e.qty) || 0;
+                    const q = parseFloat(e.qty) || 0;
+                    totalQty += q;
+                    if (e.shirtType === 'Half') halfQty += q;
+                    else fullQty += q;
+
                     rowsHtml += `
                         <tr>
                             <td>${e.date}</td>
                             <td><strong>#${e.lotNo}</strong></td>
                             <td><strong>${e.qty}</strong></td>
+                            <td>₹${e.rate || '0'}</td>
                             <td>${e.shirtType}</td>
                             <td>${e.karigar}</td>
                         </tr>
@@ -1507,9 +1566,11 @@
 
                 printArea.innerHTML += `
                     <div style="margin-bottom: 25px; page-break-inside: avoid;">
+                        <h3 style="color:#071e48; margin-bottom:5px; border-bottom:1px solid #071e48; padding-bottom:4px;">Party: ${partyName}</h3>
                         <div class="folder-stats" style="margin-bottom: 8px;">
-                            <div>📂 Party Name: <strong style="color:#f9b208;">${partyName}</strong></div>
                             <div>📦 Entries: <strong>${entries.length}</strong></div>
+                            <div>⚡ Half Total: <strong>${halfQty}</strong></div>
+                            <div>⚡ Full Total: <strong>${fullQty}</strong></div>
                             <div>🔢 Total Qty: <strong>${totalQty}</strong></div>
                         </div>
                         <table>
@@ -1518,6 +1579,7 @@
                                     <th>Date</th>
                                     <th>Lot No.</th>
                                     <th>Quantity</th>
+                                    <th>Rate (₹)</th>
                                     <th>Shirt Type</th>
                                     <th>Karigar Name</th>
                                 </tr>

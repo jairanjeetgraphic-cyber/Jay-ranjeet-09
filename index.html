@@ -534,32 +534,7 @@
             }
         }
     </style>
-
-<style>
-.nav-tabs{flex-wrap:wrap}.nav-tab{min-width:150px}
-.ub{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px;font-size:13px;font-weight:700;color:var(--primary-navy);flex-wrap:wrap}
-#authOv{position:fixed;inset:0;background:var(--dark-navy);z-index:9999;display:none;align-items:center;justify-content:center;padding:15px}
-.authBox{background:#fff;border-radius:12px;padding:22px;width:100%;max-width:340px;border-top:5px solid var(--primary-pink)}
-.authBox input{width:100%;padding:11px;margin:6px 0;border:1px solid #cbd5e1;border-radius:6px;font-size:15px}
-.fr{display:flex;gap:8px;flex-wrap:wrap}.fr>*{flex:1;min-width:120px;padding:9px;border:1px solid #cbd5e1;border-radius:6px;font-size:14px}
-.bt{background:var(--primary-navy);color:#fff!important;border:none!important;padding:10px 14px;border-radius:6px;font-weight:700;cursor:pointer;font-size:14px}
-.bt.pk{background:var(--primary-pink)}.bt.gr{background:#16a34a}.bt.rd{background:#dc2626}.bt.sm{padding:6px 10px;font-size:12px;min-width:0;flex:none}
-.sumrow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-.sumc{padding:12px;border-radius:8px;text-align:center;font-weight:700;font-size:13px}
-.row2{display:flex;justify-content:space-between;align-items:center;padding:10px;border-bottom:1px solid #e2e8f0;gap:8px}
-.pos{color:#16a34a}.neg{color:#dc2626}
-.card2{background:#fafafa;border:1px solid #e2e8f0;border-radius:8px;padding:14px;margin-bottom:14px}
-.chip{display:inline-block;background:var(--light-pink-bg);border:1px solid #f5c2da;border-radius:20px;padding:4px 10px;font-size:12px;font-weight:700;margin:3px}
-</style>
-<style>
-#pdfArea{display:none}
-@media print{body.pn>*:not(#pdfArea){display:none!important}body.pn #pdfArea{display:block!important;padding:10px;color:#000}
-#pdfArea h2{color:#071e48;border-bottom:3px solid #e61a73;padding-bottom:6px;margin-bottom:8px}
-#pdfArea table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
-#pdfArea th{background:#071e48;color:#fff;padding:6px;text-align:left;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-#pdfArea td{border:1px solid #cbd5e1;padding:6px}#pdfArea tr{page-break-inside:avoid}
-#pdfArea .r{text-align:right}#pdfArea .tot td{font-weight:800;background:#f0f4fa}}
-</style></head>
+</head>
 <body>
 <div class="container">
     <!-- Header Banner -->
@@ -578,13 +553,10 @@
         </label>
     </div>
 
-    <div class="ub no-print"><span id="uName">👤 Offline mode</span><span><span id="syncSt" style="font-weight:400"></span> <button class="bt sm" onclick="doLogout()">Logout</button></span></div>
     <!-- Main Navigation Tabs -->
     <div class="nav-tabs">
         <button class="nav-tab active" id="tabBtnBilling" onclick="switchMainTab('billing')">🧾 Billing & Invoice</button>
         <button class="nav-tab" id="tabBtnDataEntry" onclick="switchMainTab('dataEntry')">📋 Data Entry (Production & PDF)</button>
-        <button class="nav-tab" id="tabBtnKhata" onclick="switchMainTab('khata')">📒 Khaata Book (Len-Den)</button>
-        <button class="nav-tab" id="tabBtnKharch" onclick="switchMainTab('kharch')">💸 Daily Kharch</button>
     </div>
 
     <!-- ========================================== -->
@@ -826,9 +798,6 @@
         </div>
     </div>
 
-    <div id="khataTab" class="tab-content"><div id="khBody"></div></div>
-    <div id="kharchTab" class="tab-content"><div id="krBody"></div></div>
-
     <!-- Hidden Section Used Only When Printing All Parties Together -->
     <div id="allPartiesPrintArea"></div>
 
@@ -838,18 +807,6 @@
     </div>
 </div>
 
-<div id="pdfArea"></div>
-<div id="authOv"><div class="authBox">
-<h2 style="color:var(--primary-navy);text-align:center">Jay Ranjeet</h2>
-<p style="text-align:center;font-size:13px;color:#64748b;margin-bottom:8px">Login karein — data har device pe milega</p>
-<div id="authMain"><input id="auUser" placeholder="Username" autocapitalize="none" autocomplete="username"><input id="auPass" type="password" placeholder="Password (kam se kam 6 akshar)" autocomplete="current-password">
-<div id="auErr" style="color:#dc2626;font-size:13px;min-height:18px"></div>
-<div class="fr" style="margin-top:6px"><button class="bt" onclick="doAuth(false)">Login</button><button class="bt pk" onclick="doAuth(true)">Naya Account</button></div></div>
-<div id="authSetup" style="display:none;font-size:13px;color:#334155"><p><b>⚙️ Setup baaki hai:</b> file me <code>FIREBASE_CONFIG</code> bharna hai tab login aur sync chalega.</p><button class="bt" style="width:100%;margin-top:10px" onclick="offlineGo()">Bina login ke chalao (sirf is device pe)</button></div>
-</div></div>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
     // ==========================================
     // GLOBAL & BILLING VARIABLES
@@ -888,13 +845,20 @@
     }
 
     function switchMainTab(tab) {
-        const m = {billing:['billingTab','tabBtnBilling'], dataEntry:['dataEntryTab','tabBtnDataEntry'], khata:['khataTab','tabBtnKhata'], kharch:['kharchTab','tabBtnKharch']};
-        Object.values(m).forEach(([t,bn]) => { document.getElementById(t).classList.remove('active'); document.getElementById(bn).classList.remove('active'); });
-        document.getElementById(m[tab][0]).classList.add('active');
-        document.getElementById(m[tab][1]).classList.add('active');
-        if (tab === 'dataEntry') { renderPartyEntries(); document.getElementById('entryQty').focus(); }
-        if (tab === 'khata') renderKhata();
-        if (tab === 'kharch') renderKharch();
+        document.getElementById('billingTab').classList.remove('active');
+        document.getElementById('dataEntryTab').classList.remove('active');
+        document.getElementById('tabBtnBilling').classList.remove('active');
+        document.getElementById('tabBtnDataEntry').classList.remove('active');
+
+        if (tab === 'billing') {
+            document.getElementById('billingTab').classList.add('active');
+            document.getElementById('tabBtnBilling').classList.add('active');
+        } else {
+            document.getElementById('dataEntryTab').classList.add('active');
+            document.getElementById('tabBtnDataEntry').classList.add('active');
+            renderPartyEntries();
+            document.getElementById('entryQty').focus();
+        }
     }
 
     function forceFaviconJR() {
@@ -1730,226 +1694,6 @@
             document.title = originalTitle;
         }, 1000);
     }
-</script>
-
-<script>
-// ===== FIREBASE CONFIG: Firebase Console > Project settings > Your apps (Web) se copy karke yahan paste karein =====
-const FIREBASE_CONFIG = { apiKey:"", authDomain:"", projectId:"", appId:"" };// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyARyRiGBUjs5vnSnpt4EZGgt796zkzzzgY",
-  authDomain: "jay-ranjeet-billing.firebaseapp.com",
-  projectId: "jay-ranjeet-billing",
-  storageBucket: "jay-ranjeet-billing.firebasestorage.app",
-  messagingSenderId: "123322506591",
-  appId: "1:123322506591:web:979ccb22e794873c7b6aea",
-  measurementId: "G-S60Q2L1H47"
-};
-
-const $ = id => document.getElementById(id);
-const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const inr = n => '₹' + Math.abs(n).toLocaleString('en-IN', {maximumFractionDigits:2});
-const todayISO = () => new Date(Date.now() - new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10);
-const newId = () => Date.now().toString(36) + Math.random().toString(36).slice(2,5);
-const jget = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) || d; } catch(e) { return d; } };
-
-// ================= CLOUD SYNC =================
-const _si = Storage.prototype.setItem, _ri = Storage.prototype.removeItem;
-const syncKey = k => !/^(firebase|_)/.test(k);
-Storage.prototype.setItem = function(k, v) { _si.call(this, k, v); if (this === localStorage && syncKey(k)) qPush(); };
-Storage.prototype.removeItem = function(k) { _ri.call(this, k); if (this === localStorage && syncKey(k)) qPush(); };
-let auth, db, uid = null, pushT = null, unsub = null;
-const DEV = newId();
-const setSt = t => { $('syncSt').textContent = t; };
-function snap() {
-    const o = {};
-    for (let i = 0; i < localStorage.length; i++) {
-        const k = localStorage.key(i);
-        if (syncKey(k)) { const v = localStorage.getItem(k); if (v.length < 250000) o[k] = v; }
-    }
-    return o;
-}
-function qPush() { if (!uid) return; clearTimeout(pushT); setSt('⏳ Sync...'); pushT = setTimeout(push, 1500); }
-async function push() {
-    if (!uid) return;
-    try { await db.collection('users').doc(uid).set({data: JSON.stringify(snap()), t: Date.now(), dev: DEV}); setSt('☁️ Saved'); }
-    catch(e) { setSt('⚠️ Sync nahi hua'); }
-}
-function applyRemote(str) {
-    const o = JSON.parse(str);
-    Object.keys(snap()).forEach(k => { if (!(k in o)) _ri.call(localStorage, k); });
-    Object.keys(o).forEach(k => _si.call(localStorage, k, o[k]));
-    [loadSavedLogo, generateBillNumber, initMasterItems, loadSavedUpiId, loadHistory, updateQRCode, initDataEntrySystem, renderKhata, renderKharch].forEach(f => { try { f(); } catch(e) {} });
-}
-function hasLocal() {
-    const f = jget('jr_party_folders', {});
-    return jget('savedBills', []).length || Object.values(f).some(a => a.length) || jget('jr_khata', {parties:[]}).parties.length || jget('jr_kharch', []).length;
-}
-async function firstSync() {
-    try {
-        const d = await db.collection('users').doc(uid).get();
-        if (d.exists) {
-            const same = localStorage.getItem('_sync_uid') === uid;
-            if (same || !hasLocal() || confirm('Cloud me aapka purana data hai.\n\nOK = Cloud wala data is device pe lo\nCancel = Is device ka data cloud pe bhej do (cloud wala replace hoga)')) applyRemote(d.data().data);
-            else await push();
-        } else await push();
-        _si.call(localStorage, '_sync_uid', uid);
-        setSt('☁️ Synced');
-        unsub = db.collection('users').doc(uid).onSnapshot(s => {
-            if (!s.exists || s.metadata.hasPendingWrites) return;
-            const x = s.data();
-            if (x.dev !== DEV) { applyRemote(x.data); setSt('☁️ Update mila'); }
-        });
-    } catch(e) { setSt('⚠️ Offline'); }
-}
-
-// ================= LOGIN =================
-const uMail = u => u + '@jrbilling.app';
-function showAuth() { $('authOv').style.display = 'flex'; }
-function offlineGo() { $('authOv').style.display = 'none'; }
-async function doAuth(isNew) {
-    const u = $('auUser').value.trim().toLowerCase(), p = $('auPass').value, er = $('auErr');
-    if (!/^[a-z0-9_]{3,20}$/.test(u)) return er.textContent = 'Username 3-20 akshar: a-z, 0-9, _ hi';
-    if (p.length < 6) return er.textContent = 'Password kam se kam 6 akshar ka rakho';
-    er.textContent = '⏳ ...';
-    try {
-        if (isNew) await auth.createUserWithEmailAndPassword(uMail(u), p);
-        else await auth.signInWithEmailAndPassword(uMail(u), p);
-        er.textContent = '';
-    } catch(e) {
-        const m = {'auth/email-already-in-use':'Ye username pehle se hai, dusra chuno','auth/invalid-credential':'Username ya password galat hai','auth/wrong-password':'Password galat hai','auth/user-not-found':'Ye username nahi mila — "Naya Account" dabao','auth/network-request-failed':'Internet check karo','auth/operation-not-allowed':'Firebase me Email/Password login ON karo'};
-        er.textContent = m[e.code] || e.message;
-    }
-}
-async function doLogout() {
-    if (!uid) return showAuth();
-    if (!confirm('Logout karein? Is device se data hat jayega, cloud me safe rahega.')) return;
-    clearTimeout(pushT); await push();
-    if (unsub) unsub();
-    Object.keys(snap()).forEach(k => _ri.call(localStorage, k)); _ri.call(localStorage, '_sync_uid');
-    await auth.signOut(); location.reload();
-}
-window.addEventListener('load', () => {
-    if (typeof firebase === 'undefined' || !FIREBASE_CONFIG.apiKey) { showAuth(); $('authMain').style.display = 'none'; $('authSetup').style.display = 'block'; return; }
-    firebase.initializeApp(FIREBASE_CONFIG); auth = firebase.auth(); db = firebase.firestore();
-    auth.onAuthStateChanged(async u => {
-        if (!u) { uid = null; showAuth(); return; }
-        uid = u.uid; $('uName').textContent = '👤 ' + u.email.split('@')[0];
-        $('authOv').style.display = 'none'; await firstSync();
-    });
-});
-
-// ================= KHAATA BOOK =================
-let KH = {parties:[], txns:[]}, khOpen = null;
-const khLoad = () => { KH = jget('jr_khata', {parties:[], txns:[]}); };
-const khSave = () => localStorage.setItem('jr_khata', JSON.stringify(KH));
-const khBal = pid => KH.txns.filter(t => t.pid === pid).reduce((s, t) => s + (t.type === 'gave' ? t.amt : -t.amt), 0);
-function addKhParty() {
-    const n = $('khName').value.trim(); if (!n) return alert('Naam likho');
-    KH.parties.push({id:newId(), name:n, phone:$('khPhone').value.trim()}); khSave(); renderKhata();
-}
-function openKh(id) { khOpen = id; renderKhata(); }
-function addKhTx(type) {
-    const amt = parseFloat($('khAmt').value); if (!(amt > 0)) return alert('Sahi rakam likho');
-    KH.txns.push({id:newId(), pid:khOpen, type, amt, date:$('khDate').value || todayISO(), note:$('khNote').value.trim()});
-    khSave(); renderKhata();
-}
-function delKhTx(id) { if (confirm('Ye entry delete karein?')) { KH.txns = KH.txns.filter(t => t.id !== id); khSave(); renderKhata(); } }
-function delKhParty() {
-    if (!confirm('Party aur uski saari entries delete hongi. Pakka?')) return;
-    KH.parties = KH.parties.filter(p => p.id !== khOpen); KH.txns = KH.txns.filter(t => t.pid !== khOpen); khOpen = null; khSave(); renderKhata();
-}
-function khWA() {
-    const p = KH.parties.find(x => x.id === khOpen), b = khBal(p.id);
-    const msg = b > 0 ? `Namaste ${p.name}, aapka ${inr(b)} baaki hai. Kripya jaldi bhej dein. - Jay Ranjeet` : `Namaste ${p.name}, hamara hisab: ${b < 0 ? inr(b) + ' hume aapko dena hai' : 'barabar hai'}. - Jay Ranjeet`;
-    const ph = (p.phone || '').replace(/\D/g, '').slice(-10);
-    window.open('https://wa.me/' + (ph ? '91' + ph : '') + '?text=' + encodeURIComponent(msg), '_blank');
-}
-function renderKhata() {
-    khLoad(); const el = $('khBody'); if (!el) return;
-    const p = KH.parties.find(x => x.id === khOpen);
-    if (p) {
-        const b = khBal(p.id), t = KH.txns.filter(x => x.pid === p.id).sort((x, y) => y.date.localeCompare(x.date) || y.id.localeCompare(x.id));
-        el.innerHTML = `<button class="bt" onclick="khOpen=null;renderKhata()">⬅ Wapas</button>
-        <h3 style="margin:12px 0 8px">${esc(p.name)} <small style="font-weight:400">${esc(p.phone)}</small></h3>
-        <div class="sumc" style="background:${b>0?'#dcfce7':b<0?'#fee2e2':'#f1f5f9'}"><span class="${b>0?'pos':b<0?'neg':''}" style="font-size:18px">${b>0?'Aapko lena hai: ':b<0?'Aapko dena hai: ':'Hisab barabar: '}${inr(b)}</span></div>
-        <div class="card2" style="margin-top:12px"><div class="fr"><input id="khAmt" type="number" inputmode="decimal" placeholder="Rakam ₹"><input id="khDate" type="date" value="${todayISO()}"><input id="khNote" placeholder="Note / Detail"></div>
-        <div class="fr" style="margin-top:8px"><button class="bt rd" onclick="addKhTx('gave')">⬆ Maine Diya</button><button class="bt gr" onclick="addKhTx('got')">⬇ Maine Liya</button></div></div>
-        ${t.map(x => `<div class="row2"><div><b>${x.date.split('-').reverse().join('/')}</b><br><small>${esc(x.note)}</small></div><div style="display:flex;gap:8px;align-items:center"><b class="${x.type==='gave'?'neg':'pos'}">${x.type==='gave'?'Diya':'Liya'} ${inr(x.amt)}</b><button class="bt rd sm" onclick="delKhTx('${x.id}')">✕</button></div></div>`).join('') || '<p style="text-align:center;color:#64748b;padding:15px">Abhi koi entry nahi</p>'}
-        <div class="fr" style="margin-top:14px"><button class="bt" onclick="khWA()">📲 WhatsApp Message</button><button class="bt pk" onclick="khPartyPDF()">📄 Party PDF</button><button class="bt rd" onclick="delKhParty()">🗑 Party Delete</button></div>`;
-        return;
-    }
-    khOpen = null; let lena = 0, dena = 0;
-    const rows = KH.parties.map(x => ({x, b:khBal(x.id)})).sort((a, c) => Math.abs(c.b) - Math.abs(a.b));
-    rows.forEach(r => r.b > 0 ? lena += r.b : dena -= r.b);
-    el.innerHTML = `<div class="sumrow"><div class="sumc" style="background:#dcfce7;color:#16a34a">Total Lena hai<br><span style="font-size:20px">${inr(lena)}</span></div><div class="sumc" style="background:#fee2e2;color:#dc2626">Total Dena hai<br><span style="font-size:20px">${inr(dena)}</span></div></div>
-    <button class="bt pk" style="width:100%" onclick="khAllPDF()">📄 Saari Parties ka PDF</button>
-    <div class="card2" style="margin-top:12px"><div class="fr"><input id="khName" placeholder="Party / Vyakti ka naam"><input id="khPhone" placeholder="Mobile (optional)" inputmode="tel"><button class="bt pk" onclick="addKhParty()">➕ Party Jodo</button></div></div>
-    ${rows.map(r => `<div class="row2" style="cursor:pointer" onclick="openKh('${r.x.id}')"><div><b>${esc(r.x.name)}</b><br><small>${esc(r.x.phone)}</small></div><div style="text-align:right" class="${r.b>0?'pos':r.b<0?'neg':''}"><b>${inr(r.b)}</b><br><small>${r.b>0?'Lena hai':r.b<0?'Dena hai':'Barabar'}</small></div></div>`).join('') || '<p style="text-align:center;color:#64748b;padding:20px">Abhi koi party nahi. Upar naam jodo.</p>'}`;
-}
-
-// ================= DAILY KHARCH =================
-let KR = [], krMonth = todayISO().slice(0, 7);
-const KCAT = ['Chai-Nashta','Khana','Transport / Petrol','Majdoori / Salary','Raw Material','Bijli / Rent','Repair','Ghar ka kharch','Other'];
-const krSave = () => localStorage.setItem('jr_kharch', JSON.stringify(KR));
-function addKharch() {
-    const amt = parseFloat($('krAmt').value); if (!(amt > 0)) return alert('Sahi rakam likho');
-    KR.push({id:newId(), date:$('krDate').value || todayISO(), cat:$('krCat').value, amt, note:$('krNote').value.trim()});
-    krMonth = KR[KR.length - 1].date.slice(0, 7); krSave(); renderKharch();
-}
-function delKharch(id) { if (confirm('Delete karein?')) { KR = KR.filter(x => x.id !== id); krSave(); renderKharch(); } }
-function renderKharch() {
-    KR = jget('jr_kharch', []); const el = $('krBody'); if (!el) return;
-    if (!krMonth) krMonth = todayISO().slice(0, 7);
-    const list = KR.filter(x => x.date.startsWith(krMonth)).sort((a, b) => b.date.localeCompare(a.date) || b.id.localeCompare(a.id));
-    const total = list.reduce((s, x) => s + x.amt, 0), cats = {}, days = {}, months = {};
-    list.forEach(x => { cats[x.cat] = (cats[x.cat] || 0) + x.amt; (days[x.date] = days[x.date] || []).push(x); });
-    KR.forEach(x => { const m = x.date.slice(0, 7); months[m] = (months[m] || 0) + x.amt; });
-    const defDate = todayISO().startsWith(krMonth) ? todayISO() : krMonth + '-01';
-    el.innerHTML = `<div class="fr" style="align-items:center"><input type="month" value="${krMonth}" onchange="krMonth=this.value;renderKharch()"><div class="sumc" style="background:#fee2e2;color:#dc2626">Is mahine ka kharch<br><span style="font-size:20px">${inr(total)}</span></div></div>
-    <div class="card2" style="margin-top:12px"><div class="fr"><input id="krAmt" type="number" inputmode="decimal" placeholder="Rakam ₹"><select id="krCat">${KCAT.map(c => `<option>${c}</option>`).join('')}</select><input id="krDate" type="date" value="${defDate}"><input id="krNote" placeholder="Note (optional)"></div>
-    <button class="bt pk" style="margin-top:8px;width:100%" onclick="addKharch()">➕ Kharch Jodo</button></div>
-    <button class="bt pk" style="width:100%;margin-bottom:6px" onclick="krPDF()">📄 Is Mahine ka PDF</button>
-    <div>${Object.entries(cats).sort((a, b) => b[1] - a[1]).map(([c, v]) => `<span class="chip">${esc(c)}: ${inr(v)}</span>`).join('')}</div>
-    ${Object.keys(days).map(d => `<div style="margin-top:12px;font-weight:700;color:var(--primary-navy);display:flex;justify-content:space-between"><span>${d.split('-').reverse().join('/')}</span><span>${inr(days[d].reduce((s, x) => s + x.amt, 0))}</span></div>
-    ${days[d].map(x => `<div class="row2"><div>${esc(x.cat)}<br><small>${esc(x.note)}</small></div><div style="display:flex;gap:8px;align-items:center"><b class="neg">${inr(x.amt)}</b><button class="bt rd sm" onclick="delKharch('${x.id}')">✕</button></div></div>`).join('')}`).join('') || '<p style="text-align:center;color:#64748b;padding:20px">Is mahine koi kharch nahi</p>'}
-    <h4 style="margin:20px 0 6px;color:var(--primary-navy)">📅 Saare Mahine</h4>
-    ${Object.keys(months).sort().reverse().map(m => `<div class="row2" style="cursor:pointer" onclick="krMonth='${m}';renderKharch()"><b>${m.split('-').reverse().join('/')}</b><b>${inr(months[m])}</b></div>`).join('') || '<small>Abhi koi data nahi</small>'}`;
-}
-// ================= PDF (Khaata & Kharch) =================
-function printPDF(title, body) {
-    $('pdfArea').innerHTML = `<h2>Jay Ranjeet — ${esc(title)}</h2><div style="font-size:12px;color:#475569">Date: ${todayISO().split('-').reverse().join('/')}</div>` + body;
-    const ot = document.title; document.title = title.replace(/[^\w]+/g, '_');
-    document.body.classList.add('pn'); window.print();
-    setTimeout(() => { document.body.classList.remove('pn'); document.title = ot; $('pdfArea').innerHTML = ''; }, 1000);
-}
-const dmy = d => d.split('-').reverse().join('/');
-function khPartyPDF() {
-    const p = KH.parties.find(x => x.id === khOpen); if (!p) return;
-    const t = KH.txns.filter(x => x.pid === p.id).sort((a, b) => a.date.localeCompare(b.date) || a.id.localeCompare(b.id));
-    let run = 0, gave = 0, got = 0;
-    const rows = t.map(x => { run += x.type === 'gave' ? x.amt : -x.amt; x.type === 'gave' ? gave += x.amt : got += x.amt;
-        return `<tr><td>${dmy(x.date)}</td><td>${esc(x.note)}</td><td class="r">${x.type === 'gave' ? inr(x.amt) : ''}</td><td class="r">${x.type === 'got' ? inr(x.amt) : ''}</td><td class="r">${inr(run)} ${run > 0 ? 'Lena' : run < 0 ? 'Dena' : ''}</td></tr>`; }).join('');
-    printPDF('Khaata: ' + p.name, `<div style="margin-top:6px"><b>${esc(p.name)}</b> ${esc(p.phone)}</div>
-    <table><thead><tr><th>Date</th><th>Detail</th><th class="r">Diya</th><th class="r">Liya</th><th class="r">Balance</th></tr></thead><tbody>${rows}
-    <tr class="tot"><td colspan="2">Total</td><td class="r">${inr(gave)}</td><td class="r">${inr(got)}</td><td class="r">${inr(run)} ${run > 0 ? 'Lena hai' : run < 0 ? 'Dena hai' : ''}</td></tr></tbody></table>`);
-}
-function khAllPDF() {
-    khLoad(); if (!KH.parties.length) return alert('Abhi koi party nahi hai');
-    let lena = 0, dena = 0;
-    const rows = KH.parties.map(x => ({x, b: khBal(x.id)})).sort((a, c) => Math.abs(c.b) - Math.abs(a.b)).map(r => { r.b > 0 ? lena += r.b : dena -= r.b;
-        return `<tr><td>${esc(r.x.name)}</td><td>${esc(r.x.phone)}</td><td class="r">${r.b > 0 ? inr(r.b) : ''}</td><td class="r">${r.b < 0 ? inr(r.b) : ''}</td></tr>`; }).join('');
-    printPDF('Khaata Book Summary', `<table><thead><tr><th>Party</th><th>Mobile</th><th class="r">Lena hai</th><th class="r">Dena hai</th></tr></thead><tbody>${rows}
-    <tr class="tot"><td colspan="2">Total</td><td class="r">${inr(lena)}</td><td class="r">${inr(dena)}</td></tr></tbody></table>`);
-}
-function krPDF() {
-    const list = KR.filter(x => x.date.startsWith(krMonth)).sort((a, b) => a.date.localeCompare(b.date) || a.id.localeCompare(b.id));
-    if (!list.length) return alert('Is mahine koi kharch nahi hai');
-    const cats = {}; let tot = 0; list.forEach(x => { cats[x.cat] = (cats[x.cat] || 0) + x.amt; tot += x.amt; });
-    const rows = list.map(x => `<tr><td>${dmy(x.date)}</td><td>${esc(x.cat)}</td><td>${esc(x.note)}</td><td class="r">${inr(x.amt)}</td></tr>`).join('');
-    const crow = Object.entries(cats).sort((a, b) => b[1] - a[1]).map(([c, v]) => `<tr><td>${esc(c)}</td><td class="r">${inr(v)}</td></tr>`).join('');
-    printPDF('Kharch ' + krMonth.split('-').reverse().join('/'), `<table><thead><tr><th>Date</th><th>Category</th><th>Note</th><th class="r">Rakam</th></tr></thead><tbody>${rows}<tr class="tot"><td colspan="3">Total Kharch</td><td class="r">${inr(tot)}</td></tr></tbody></table>
-    <h3 style="margin-top:16px;color:#071e48">Category ke hisab se</h3><table><tbody>${crow}</tbody></table>`);
-}
 </script>
 </body>
 </html>
